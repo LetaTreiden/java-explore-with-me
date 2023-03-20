@@ -19,21 +19,22 @@ public class BaseClient {
     this.rest = rest;
   }
 
-  protected ResponseEntity<Object> get(String path) {
+ /* protected ResponseEntity<Object> get(String path) {
     return get(path, null);
   }
+  */
 
-  protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {
-    return makeAndSendRequest(HttpMethod.GET, path, parameters, null);
+  protected ResponseEntity<Object> get(@Nullable Map<String, Object> parameters) {
+    return makeAndSendRequest(HttpMethod.GET, "/stats", parameters, null);
   }
 
-  protected <T> ResponseEntity<Object> post(String path, T body) {
-    return post(path, null, body);
+  protected <T> ResponseEntity<Object> post(T body) {
+    return post(null, body);
   }
 
-  protected <T> ResponseEntity<Object> post(String path, @Nullable Map<String, Object> parameters,
-      T body) {
-    return makeAndSendRequest(HttpMethod.POST, path, parameters, body);
+  protected <T> ResponseEntity<Object> post(@Nullable Map<String, Object> parameters,
+                                            T body) {
+    return makeAndSendRequest(HttpMethod.POST, "/hit", parameters, body);
   }
 
   protected <T> ResponseEntity<Object> put(String path, T body) {
@@ -56,10 +57,13 @@ public class BaseClient {
     return patch(path, parameters, null);
   }
 
+
   protected <T> ResponseEntity<Object> patch(String path, @Nullable Map<String, Object> parameters,
       T body) {
     return makeAndSendRequest(HttpMethod.PATCH, path, parameters, body);
   }
+
+
 
   protected ResponseEntity<Object> delete(String path) {
     return delete(path, null);
