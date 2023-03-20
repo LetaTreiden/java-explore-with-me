@@ -15,7 +15,7 @@ import ru.practicum.explorewithme.model.Stats;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-public abstract class StatsRepositoryCustomImpl implements StatsRepository {
+public class StatsRepositoryCustomImpl implements StatsRepositoryCustom {
 
   private final EntityManager em;
 
