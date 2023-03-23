@@ -1,8 +1,10 @@
 package ru.practicum.explorewithme.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,7 +16,6 @@ import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.service.StatsService;
 
 @RestController
-@Validated
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class StatsController {
 
@@ -26,10 +27,10 @@ public class StatsController {
   }
 
   @GetMapping("/stats")
-  public HitStatDto[] getStats(@RequestParam String start,
-      @RequestParam String end,
-      @RequestParam(required = false) List<String> uris,
-      @RequestParam(required = false) Boolean unique) {
+  public HitStatDto[] getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+      @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+      @RequestParam(defaultValue = "false") List<String> uris,
+      @RequestParam(defaultValue = "false") Boolean unique) {
     return statsService.getStats(start, end, uris, unique);
   }
 }

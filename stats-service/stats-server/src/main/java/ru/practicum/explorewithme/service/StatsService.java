@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class StatsService {
     statsRepository.save(new StatsMapper().toStats(hitDto));
   }
 
-  public HitStatDto[] getStats(String start, String end, List<String> uris, Boolean unique) {
+  public HitStatDto[] getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
     return statsRepository.getStats(start, end, uris, unique).toArray(new HitStatDto[0]);
   }
 }

@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.repository;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -20,7 +21,7 @@ public class StatsRepositoryCustomImpl implements StatsRepositoryCustom {
   private final EntityManager em;
 
   @Override
-  public List<HitStatDto> getStats(String start, String end, List<String> uris, Boolean unique) {
+  public List<HitStatDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
     var cb = em.getCriteriaBuilder();
     CriteriaQuery<HitStatDto> cq = cb.createQuery(HitStatDto.class);
 
