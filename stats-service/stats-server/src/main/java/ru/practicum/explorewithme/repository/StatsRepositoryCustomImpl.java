@@ -11,7 +11,6 @@ import javax.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.HitToRepo;
 import ru.practicum.explorewithme.model.Stats;
 
