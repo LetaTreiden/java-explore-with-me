@@ -2,7 +2,7 @@ version: '3.8'
 services:
   stats-server:
     build: stats-service/stats-server
-    image: letaat/statserv:v0.0.1
+    image: letaat/statserv:v0.0.2
     container_name: stats-server
     ports:
       - "9090:9090"
