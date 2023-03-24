@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.service;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
