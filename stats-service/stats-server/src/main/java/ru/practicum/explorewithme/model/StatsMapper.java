@@ -4,10 +4,12 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.HitToRepo;
 
+@Component
 public class StatsMapper {
 
   public Stats toStats(HitDto hitDto) {

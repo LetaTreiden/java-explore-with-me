@@ -28,7 +28,7 @@ public class StatsController {
   @GetMapping("/stats")
   public HitStatDto[] getStats(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
       @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
-      @RequestParam(defaultValue = "false") List<String> uris,
+      @RequestParam(defaultValue = "") List<String> uris,
       @RequestParam(defaultValue = "false") Boolean unique) {
     return statsService.getStats(start, end, uris, unique);
   }

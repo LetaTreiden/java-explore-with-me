@@ -22,8 +22,7 @@ public class StatsService {
   }
 
   public HitStatDto[] getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-    StatsMapper mapper = new StatsMapper();
     List<HitToRepo> hits = statsRepository.getStats(start, end, uris, unique);
-    return mapper.toListDtos(hits);
+    return new StatsMapper().toListDtos(hits);
   }
 }
