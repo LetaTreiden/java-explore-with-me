@@ -1,6 +1,9 @@
 package ru.practicum.explorewithme.model;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.HitToRepo;
@@ -22,5 +25,13 @@ public class StatsMapper {
     hitDto.setApp(hit.getApp());
     hitDto.setUri(hit.getUri());
     return hitDto;
+  }
+
+  public HitStatDto[] toListDtos(List<HitToRepo> hits) {
+    List<HitStatDto> list = new ArrayList<>();
+    for (HitToRepo hit : hits) {
+      list.add(toDto(hit));
+    }
+    return list.toArray(new HitStatDto[0]);
   }
 }
