@@ -1,11 +1,13 @@
 package ru.practicum.explorewithme.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.HitStatDto;
+import ru.practicum.explorewithme.HitToRepo;
 import ru.practicum.explorewithme.model.StatsMapper;
 import ru.practicum.explorewithme.repository.StatsRepository;
 
@@ -14,12 +16,14 @@ import ru.practicum.explorewithme.repository.StatsRepository;
 public class StatsService {
 
   private final StatsRepository statsRepository;
+  private final StatsMapper statsMapper;
 
   public void hit(HitDto hitDto) {
-    statsRepository.save(StatsMapper.toEntity(hitDto));
+    statsRepository.save(statsMapper.toStats(hitDto));
   }
 
-  public List<HitStatDto> getStats(String start, String end, List<String> uris, Boolean unique) {
-    return statsRepository.getStats(start, end, uris, unique);
+  public HitStatDto[] getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+    List<HitToRepo> hits = statsRepository.getStats(start, end, uris, unique);
+    return statsMapper.toListDtos(hits);
   }
 }

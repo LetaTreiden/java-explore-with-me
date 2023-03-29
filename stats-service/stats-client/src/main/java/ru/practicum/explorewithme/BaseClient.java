@@ -1,7 +1,19 @@
 package ru.practicum.explorewithme;
 
+import java.io.IOException;
+import java.net.Authenticator;
+import java.net.CookieHandler;
+import java.net.ProxySelector;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -32,7 +44,7 @@ public class BaseClient {
   }
 
   protected <T> ResponseEntity<Object> post(String path, @Nullable Map<String, Object> parameters,
-      T body) {
+                                            T body) {
     return makeAndSendRequest(HttpMethod.POST, path, parameters, body);
   }
 
@@ -57,7 +69,7 @@ public class BaseClient {
   }
 
   protected <T> ResponseEntity<Object> patch(String path, @Nullable Map<String, Object> parameters,
-      T body) {
+                                             T body) {
     return makeAndSendRequest(HttpMethod.PATCH, path, parameters, body);
   }
 
@@ -70,14 +82,14 @@ public class BaseClient {
   }
 
   private <T> ResponseEntity<Object> makeAndSendRequest(HttpMethod method, String path,
-      @Nullable Map<String, Object> parameters, @Nullable T body) {
+                                                        @Nullable Map<String, Object> parameters, @Nullable T body) {
     HttpEntity<T> requestEntity = new HttpEntity<>(body, defaultHeaders());
 
     ResponseEntity<Object> shareitServerResponse;
     try {
       shareitServerResponse = parameters != null
-          ? rest.exchange(path, method, requestEntity, Object.class, parameters)
-          : rest.exchange(path, method, requestEntity, Object.class);
+              ? rest.exchange(path, method, requestEntity, Object.class, parameters)
+              : rest.exchange(path, method, requestEntity, Object.class);
     } catch (HttpStatusCodeException e) {
       return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsByteArray());
     }

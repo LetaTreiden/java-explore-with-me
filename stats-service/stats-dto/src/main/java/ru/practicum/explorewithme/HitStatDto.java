@@ -10,8 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HitStatDto {
-
-  private String app;
-  private String uri;
-  private Long hits;
+    private String app;
+    private String uri;
+    private Long hits;
 }
