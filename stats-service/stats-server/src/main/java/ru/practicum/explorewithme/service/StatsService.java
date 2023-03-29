@@ -16,13 +16,14 @@ import ru.practicum.explorewithme.repository.StatsRepository;
 public class StatsService {
 
   private final StatsRepository statsRepository;
+  private final StatsMapper statsMapper;
 
   public void hit(HitDto hitDto) {
-    statsRepository.save(new StatsMapper().toStats(hitDto));
+    statsRepository.save(statsMapper.toStats(hitDto));
   }
 
   public HitStatDto[] getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
     List<HitToRepo> hits = statsRepository.getStats(start, end, uris, unique);
-    return new StatsMapper().toListDtos(hits);
+    return statsMapper.toListDtos(hits);
   }
 }
