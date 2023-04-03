@@ -23,7 +23,7 @@ services:
 
   ewm-service:
     build: ewm-service
-    image: letaat/ewmserv:v0.0.5
+    image: letaat/ewmserv:v.0.0.5
     container_name: sweet_poitras
     ports:
       - "8080:8080"
