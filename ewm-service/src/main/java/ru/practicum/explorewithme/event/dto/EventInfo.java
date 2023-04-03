@@ -14,7 +14,7 @@ public class EventInfo {
 
   private Long id;
   private String annotation;
-  private User creator;
+  private User initiator;
   private Category category;
   private String description;
 
@@ -30,10 +30,10 @@ public class EventInfo {
   private Long views;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
-  private LocalDateTime creationDate;
+  private LocalDateTime createdOn;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
-  private LocalDateTime publicationDate;
+  private LocalDateTime publishedOn;
   private Integer confirmedRequests;
 
   @Data
