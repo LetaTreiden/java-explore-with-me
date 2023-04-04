@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.event.model;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -75,5 +76,24 @@ public class Event {
 
   public Event(Long id) {
     this.id = id;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    Event event = (Event) o;
+    if ((Objects.equals(this.annotation, ((Event) o).annotation))
+            && (Objects.equals(this.category, (((Event) o).category)))
+            && (this.title.equals(((Event) o).title))) {
+      return true;
+    }
+    if (o == null) return false;
+
+    return id != 0 && Objects.equals(id, event.id);
   }
 }

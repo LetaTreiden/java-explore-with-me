@@ -44,6 +44,10 @@ public class EventServiceImpl implements EventService {
       throw new ValidationException("Something wrong with date");
     }
 
+    if (!eventRepository.findAll().contains(EventMapper.toEvent(inputEventDto))) {
+      throw new ValidationException("This event has already been published");
+    }
+
     Event event = EventMapper.toEvent(inputEventDto);
     event.setInitiatorId(new User(userId));
     event.setCategory(new Category(Long.valueOf(inputEventDto.getCategory())));
@@ -54,7 +58,7 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public OutputEventDto getById(long userId, long eventId) {
-    var event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
+    Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     event.setViews(event.getViews() != null ? event.getViews() + 1 : 1);
     eventRepository.save(event);
 
