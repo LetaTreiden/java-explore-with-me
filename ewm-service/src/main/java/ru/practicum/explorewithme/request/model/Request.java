@@ -43,6 +43,7 @@ public class Request {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private RequestStatus status;
+
   @Column(nullable = false)
   private LocalDateTime createdOn;
 }
