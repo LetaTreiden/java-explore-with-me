@@ -65,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
 
     Request request = Request.builder()
         .event(event)
-        .user(user)
+        .requester(user)
         .createdOn(LocalDateTime.now())
         .status(requestState)
         .build();
@@ -84,7 +84,7 @@ public class RequestServiceImpl implements RequestService {
   public RequestDto cancel(long userId, long requestId) {
     Request request = requestRepository.findById(requestId).orElseThrow(() -> new NoSuchElementException());
 
-    if (request.getUser().getId() != userId) {
+    if (request.getRequester().getId() != userId) {
       throw new IllegalStateException("You don't have such rights");
     }
 

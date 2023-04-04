@@ -38,7 +38,7 @@ public class Request {
 
   @ManyToOne
   @JoinColumn(name = "requester_id", referencedColumnName = "id", nullable = false)
-  private User user;
+  private User requester;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
