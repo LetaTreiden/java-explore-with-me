@@ -11,9 +11,9 @@ public class RequestMapper {
   public static RequestDto toDto(Request request) {
     return RequestDto.builder()
         .id(request.getId())
-        .requester(request.getRequester().getId())
-        .event(request.getEvent().getId())
-        .created(request.getCreated())
+        .requesterId(request.getUser().getId())
+        .eventId(request.getEvent().getId())
+        .created(request.getCreatedOn())
         .status(request.getStatus())
         .build();
   }

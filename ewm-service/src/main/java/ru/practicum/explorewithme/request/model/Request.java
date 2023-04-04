@@ -38,12 +38,12 @@ public class Request {
 
   @ManyToOne
   @JoinColumn(name = "requester_id", referencedColumnName = "id", nullable = false)
-  private User requester;
+  private User user;
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private RequestStatus status;
 
   @Column(nullable = false)
-  private LocalDateTime created;
+  private LocalDateTime createdOn;
 }

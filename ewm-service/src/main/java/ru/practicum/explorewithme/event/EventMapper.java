@@ -24,7 +24,7 @@ public class EventMapper {
         .location(new OutputEventDto.Location(event.getLocation().getLat(), event.getLocation().getLon()))
         .publishedOn(event.getPublishedOn())
         .state(event.getState())
-        .initiator(event.getInitiator())
+        .initiator(event.getInitiatorId())
         .category(event.getCategory())
         .confirmedRequests(event.getConfirmedRequests())
         .views(event.getViews())
@@ -47,8 +47,8 @@ public class EventMapper {
 
   public static Event toEvent(InputEventDto inputEventDto, Event event) {
     EventStatus newState = null;
-    if (inputEventDto.getStateAction() != null) {
-      newState = inputEventDto.getStateAction() == State.CANCEL_REVIEW
+    if (inputEventDto.getState() != null) {
+      newState = inputEventDto.getState() == State.CANCEL_REVIEW
           ? EventStatus.CANCELED
           : EventStatus.PENDING;
     }
@@ -73,7 +73,7 @@ public class EventMapper {
                 : event.getLocation())
         .createdOn(event.getCreatedOn())
         .state(newState != null ? newState : event.getState())
-        .initiator(event.getInitiator())
+        .initiatorId(event.getInitiatorId())
         .category(event.getCategory())
         .confirmedRequests(event.getConfirmedRequests())
         .views(event.getViews())
@@ -90,11 +90,11 @@ public class EventMapper {
         .participantLimit(event.getParticipantLimit())
         .requestModeration(event.getRequestModeration())
         .title(event.getTitle())
-        .createdOn(event.getCreatedOn())
+        .creationDate(event.getCreatedOn())
         .location(new EventInfo.Location(event.getLocation().getLat(), event.getLocation().getLon()))
-        .publishedOn(event.getPublishedOn())
+        .publicationDate(event.getPublishedOn())
         .state(event.getState())
-        .initiator(new EventInfo.User(event.getInitiator().getId(), event.getInitiator().getName()))
+        .creator(new EventInfo.User(event.getInitiatorId().getId(), event.getInitiatorId().getName()))
         .category(new EventInfo.Category(event.getCategory().getId(), event.getCategory().getName()))
         .confirmedRequests(event.getConfirmedRequests())
         .views(event.getViews())

@@ -14,7 +14,7 @@ import ru.practicum.explorewithme.user.model.User;
 @Builder
 public class OutputEventDto {
 
-  private long id;
+  private Long id;
   private String annotation;
   private User initiator;
   private Category category;

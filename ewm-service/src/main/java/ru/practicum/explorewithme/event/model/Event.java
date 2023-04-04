@@ -34,10 +34,9 @@ public class Event {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
   @ManyToOne
   @JoinColumn(name = "initiator_id", referencedColumnName = "id", nullable = false)
-  private User initiator;
+  private User initiatorId;
 
   @Column(nullable = false)
   private String annotation;
@@ -65,11 +64,11 @@ public class Event {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
+
   private EventStatus state;
-
   @Column(nullable = false)
-  private LocalDateTime createdOn;
 
+  private LocalDateTime createdOn;
   private LocalDateTime publishedOn;
   private Integer confirmedRequests;
   private Long views;
@@ -77,5 +76,4 @@ public class Event {
   public Event(Long id) {
     this.id = id;
   }
-
 }
