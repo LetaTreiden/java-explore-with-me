@@ -46,7 +46,7 @@ public class RequestServiceImpl implements RequestService {
       throw new ValidationException("You cannot add a request to event with status " + event.getState());
     }
 
-    if (event.getInitiatorId().getId() == userId) {
+    if (event.getInitiator().getId() == userId) {
       throw new ValidationException("You are already invited:)");
     }
 
@@ -98,7 +98,7 @@ public class RequestServiceImpl implements RequestService {
   public List<RequestDto> getAllById(long userId, long eventId) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
-    if (event.getInitiatorId().getId() != userId) {
+    if (event.getInitiator().getId() != userId) {
       throw new IllegalStateException("You don't have such rights");
     }
 
