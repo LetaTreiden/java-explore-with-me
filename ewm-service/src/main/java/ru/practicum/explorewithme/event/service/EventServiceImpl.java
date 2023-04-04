@@ -45,7 +45,7 @@ public class EventServiceImpl implements EventService {
     }
 
     Event event = EventMapper.toEvent(inputEventDto);
-    event.setInitiatorId(new User(userId));
+    event.setInitiator(new User(userId));
     event.setCategory(new Category(Long.valueOf(inputEventDto.getCategory())));
     event.setState(EventStatus.PENDING);
     eventRepository.save(event);
@@ -54,7 +54,7 @@ public class EventServiceImpl implements EventService {
 
   @Override
   public OutputEventDto getById(long userId, long eventId) {
-    var event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
+    Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     event.setViews(event.getViews() != null ? event.getViews() + 1 : 1);
     eventRepository.save(event);
 
@@ -65,7 +65,7 @@ public class EventServiceImpl implements EventService {
   public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
-    if (event.getInitiatorId().getId() != userId) {
+    if (event.getInitiator().getId() != userId) {
       throw new IllegalStateException("You don't have such rights");
     }
 
@@ -96,8 +96,8 @@ public class EventServiceImpl implements EventService {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     Event updEvent = EventMapper.toEvent(inputEventDto, event);
 
-    if ((inputEventDto.getState() == State.PUBLISH_EVENT
-        || inputEventDto.getState() == State.REJECT_EVENT)
+    if ((inputEventDto.getStateAction() == State.PUBLISH_EVENT
+        || inputEventDto.getStateAction() == State.REJECT_EVENT)
         && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
       throw new ValidationException("Cannot update event with status " + event.getState());
     }
@@ -107,7 +107,7 @@ public class EventServiceImpl implements EventService {
       throw new ValidationException("Something wrong with date");
     }
 
-    EventStatus newState = inputEventDto.getState() == State.PUBLISH_EVENT
+    EventStatus newState = inputEventDto.getStateAction() == State.PUBLISH_EVENT
         ? EventStatus.PUBLISHED
         : EventStatus.CANCELED;
     updEvent.setState(newState);

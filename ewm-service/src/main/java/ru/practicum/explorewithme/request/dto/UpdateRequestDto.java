@@ -7,7 +7,7 @@ import ru.practicum.explorewithme.request.model.RequestStatus;
 
 @Getter
 @Setter
-public class UpdateRequestDto {
+public class UpdateRequestDto extends RequestDto{
 
   private List<Long> requestIds;
   private RequestStatus status;

@@ -32,7 +32,8 @@ public class InputEventDto {
 
   @NotBlank
   private String title;
-  private State state;
+
+  private State stateAction;
 
   @Data
   @Getter
