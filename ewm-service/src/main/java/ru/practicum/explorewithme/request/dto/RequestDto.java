@@ -26,7 +26,7 @@ public class RequestDto {
   private LocalDateTime created;
 
   @JsonProperty("requester")
-  private Long requesterId;
+  private Long requester;
 
   private RequestStatus status;
 }
