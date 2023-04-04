@@ -1,7 +1,6 @@
 package ru.practicum.explorewithme.repository;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -11,8 +10,8 @@ import javax.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.practicum.explorewithme.HitToRepo;
-import ru.practicum.explorewithme.model.Stats;
+import ru.practicum.explorewithme.HitStatDto;
+import ru.practicum.explorewithme.model.StatsEntity;
 
 @Repository
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -21,11 +20,11 @@ public class StatsRepositoryCustomImpl implements StatsRepositoryCustom {
   private final EntityManager em;
 
   @Override
-  public List<HitToRepo> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+  public List<HitStatDto> getStats(String start, String end, List<String> uris, Boolean unique) {
     var cb = em.getCriteriaBuilder();
-    CriteriaQuery<HitToRepo> cq = cb.createQuery(HitToRepo.class);
+    CriteriaQuery<HitStatDto> cq = cb.createQuery(HitStatDto.class);
 
-    Root<Stats> statsEntityRoot = cq.from(Stats.class);
+    Root<StatsEntity> statsEntityRoot = cq.from(StatsEntity.class);
     List<Predicate> predicates = new ArrayList<>();
 
     predicates.add(cb.between(statsEntityRoot.get("timestamp"), Timestamp.valueOf(start), Timestamp.valueOf(end)));
