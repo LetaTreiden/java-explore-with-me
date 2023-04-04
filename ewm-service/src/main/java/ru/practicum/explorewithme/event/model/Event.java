@@ -85,6 +85,7 @@ public class Event {
 
   @Override
   public boolean equals(Object o) {
+    if (o == null) return false;
     if (this == o) return true;
     Event event = (Event) o;
     if ((Objects.equals(this.annotation, ((Event) o).annotation))
@@ -92,8 +93,6 @@ public class Event {
             && (this.title.equals(((Event) o).title))) {
       return true;
     }
-    if (o == null) return false;
-
     return id != 0 && Objects.equals(id, event.id);
   }
 }
