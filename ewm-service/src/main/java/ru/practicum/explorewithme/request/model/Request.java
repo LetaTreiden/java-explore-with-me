@@ -33,11 +33,11 @@ public class Request {
   private long id;
 
   @ManyToOne
-  @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "event", referencedColumnName = "id", nullable = false)
   private Event event;
 
   @ManyToOne
-  @JoinColumn(name = "requester_id", referencedColumnName = "id", nullable = false)
+  @JoinColumn(name = "requester", referencedColumnName = "id", nullable = false)
   private User user;
 
   @Enumerated(EnumType.STRING)
@@ -45,5 +45,5 @@ public class Request {
   private RequestStatus status;
 
   @Column(nullable = false)
-  private LocalDateTime createdOn;
+  private LocalDateTime created;
 }
