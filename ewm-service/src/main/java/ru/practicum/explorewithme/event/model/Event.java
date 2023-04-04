@@ -36,7 +36,7 @@ public class Event {
   private Long id;
   @ManyToOne
   @JoinColumn(name = "initiator_id", referencedColumnName = "id", nullable = false)
-  private User initiator;
+  private User initiatorId;
 
   @Column(nullable = false)
   private String annotation;

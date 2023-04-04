@@ -45,7 +45,7 @@ public class EventServiceImpl implements EventService {
     }
 
     Event event = EventMapper.toEvent(inputEventDto);
-    event.setInitiator(new User(userId));
+    event.setInitiatorId(new User(userId));
     event.setCategory(new Category(Long.valueOf(inputEventDto.getCategory())));
     event.setState(EventStatus.PENDING);
     eventRepository.save(event);
@@ -65,7 +65,7 @@ public class EventServiceImpl implements EventService {
   public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
-    if (event.getInitiator().getId() != userId) {
+    if (event.getInitiatorId().getId() != userId) {
       throw new IllegalStateException("You don't have such rights");
     }
 
