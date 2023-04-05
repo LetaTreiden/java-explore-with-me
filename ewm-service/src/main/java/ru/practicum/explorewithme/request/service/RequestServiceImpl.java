@@ -45,7 +45,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-    if (event.getState() != EventStatus.PUBLISHED) {
+    if (event.getState() == EventStatus.PUBLISHED) {
       throw new ValidationException("You cannot add a request to event with status " + event.getState());
     }
 
@@ -115,6 +115,7 @@ log.info(String.valueOf(request.getId()));
   public RequestStatusesDto update(long userId, long eventId,
                                    UpdateRequestDto updateRequestDto) {
     List<Request> requests = requestRepository.findAllByIdIn(updateRequestDto.getRequestIds());
+    log.info(requests.toString());
     requests.forEach(s -> {
       if (s.getStatus() != RequestStatus.PENDING) {
         throw new ValidationException("You cannot change request with status " + s.getStatus());
