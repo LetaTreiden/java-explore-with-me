@@ -25,30 +25,30 @@ public class RequestController {
   private final RequestService requestService;
 
   @GetMapping("/requests")
-  public List<RequestDto> getAll(@PathVariable long userId) {
+  public List<RequestDto> getRequests(@PathVariable long userId) {
     return requestService.getAll(userId);
   }
 
   @PostMapping("/requests")
   @ResponseStatus(HttpStatus.CREATED)
-  public RequestDto create(@PathVariable long userId, @RequestParam long eventId) {
+  public RequestDto createRequest(@PathVariable long userId, @RequestParam long eventId) {
     return requestService.create(userId, eventId);
   }
 
   @PatchMapping("/requests/{requestId}/cancel")
-  public RequestDto cancel(@PathVariable long userId, @PathVariable long requestId) {
+  public RequestDto cancelRequest(@PathVariable long userId, @PathVariable long requestId) {
     return requestService.cancel(userId, requestId);
   }
 
   @GetMapping("/events/{eventId}/requests")
-  public List<RequestDto> getAllById(@PathVariable long userId, @PathVariable long eventId) {
+  public List<RequestDto> getEventRequests(@PathVariable long userId, @PathVariable long eventId) {
     return requestService.getAllById(userId, eventId);
   }
 
   @PatchMapping("/events/{eventId}/requests")
-  public RequestStatusesDto update(@PathVariable long userId,
-      @PathVariable long eventId,
-      @RequestBody UpdateRequestDto updateRequestDto) {
-    return requestService.update(userId, eventId, updateRequestDto);
+  public RequestStatusesDto changeEventRequests(@PathVariable long userId,
+                                                @PathVariable long eventId,
+                                                @RequestBody UpdateRequestDto changeRequestStatusDto) {
+    return requestService.update(userId, eventId, changeRequestStatusDto);
   }
 }
