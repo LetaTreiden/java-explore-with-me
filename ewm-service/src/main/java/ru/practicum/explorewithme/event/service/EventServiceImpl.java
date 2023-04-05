@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import ru.practicum.explorewithme.user.model.User;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class EventServiceImpl implements EventService {
 
   private final EventRepository eventRepository;
@@ -107,13 +109,14 @@ public class EventServiceImpl implements EventService {
       throw new ValidationException("Something wrong with date");
     }
 
-    EventStatus newState = inputEventDto.getState() == State.PUBLISH_EVENT
-        ? EventStatus.PUBLISHED
-        : EventStatus.CANCELED;
+    EventStatus newState;
+    if (inputEventDto.getState() == State.PUBLISH_EVENT) newState = EventStatus.PUBLISHED;
+    else newState = EventStatus.PENDING;
     updEvent.setState(newState);
     updEvent.setPublishedOn(newState == EventStatus.PUBLISHED ? LocalDateTime.now() : null);
 
     eventRepository.save(updEvent);
+    log.info(updEvent.getState().toString());
     return EventMapper.toDto(updEvent);
   }
 
@@ -129,7 +132,8 @@ public class EventServiceImpl implements EventService {
   @Override
   public EventInfo getFullInfoById(long eventId) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-    event.setViews(event.getViews() != null ? event.getViews() + 1 : 1);
+    if (event.getViews() != null) event.setViews(event.getViews() + 1);
+    else event.setViews(1L);
     eventRepository.save(event);
 
     return EventMapper.toFullDto(event);

@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.event.dto.EventStatus;
 import ru.practicum.explorewithme.event.model.Event;
@@ -23,6 +24,7 @@ import ru.practicum.explorewithme.user.model.User;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class RequestServiceImpl implements RequestService {
 
   private final RequestRepository requestRepository;
@@ -31,7 +33,7 @@ public class RequestServiceImpl implements RequestService {
   @Override
   public List<RequestDto> getAll(long userId) {
     return requestRepository.findAllByUserId(userId).stream()
-        .map(RequestMapper::toDto)
+        .map(request -> RequestMapper.toDto(request))
         .collect(Collectors.toList());
   }
 
@@ -56,9 +58,9 @@ public class RequestServiceImpl implements RequestService {
       }
     }
 
-    RequestStatus requestState = Boolean.TRUE.equals(event.getRequestModeration())
-        ? RequestStatus.PENDING
-        : RequestStatus.CONFIRMED;
+    RequestStatus requestState;
+    if (Boolean.TRUE.equals(event.getRequestModeration())) requestState = RequestStatus.PENDING;
+    else requestState = RequestStatus.CONFIRMED;
 
     User user = new User();
     user.setId(userId);
@@ -73,7 +75,8 @@ public class RequestServiceImpl implements RequestService {
     requestRepository.save(request);
 
     if (requestState == RequestStatus.CONFIRMED) {
-      event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
+      if (event.getConfirmedRequests() != null) event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+      else event.setConfirmedRequests(1);
       eventRepository.save(event);
     }
 
@@ -103,7 +106,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     return requestRepository.findAllByEventId(eventId).stream()
-        .map(RequestMapper::toDto)
+        .map(request -> RequestMapper.toDto(request))
         .collect(Collectors.toList());
   }
 
@@ -132,9 +135,11 @@ public class RequestServiceImpl implements RequestService {
 
     RequestStatusesDto updatedRequests = new RequestStatusesDto();
     if (updateRequestDto.getStatus() == RequestStatus.CONFIRMED) {
-      updatedRequests.setConfirmedRequests(requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()));
+      updatedRequests.setConfirmedRequests(requests.stream().map(request -> RequestMapper.toDto(request))
+              .collect(Collectors.toList()));
     } else {
-      updatedRequests.setRejectedRequests(requests.stream().map(RequestMapper::toDto).collect(Collectors.toList()));
+      updatedRequests.setRejectedRequests(requests.stream().map(request -> RequestMapper.toDto(request))
+              .collect(Collectors.toList()));
     }
 
     return updatedRequests;
