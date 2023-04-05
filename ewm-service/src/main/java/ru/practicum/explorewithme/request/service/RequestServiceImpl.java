@@ -21,6 +21,9 @@ import ru.practicum.explorewithme.request.model.Request;
 import ru.practicum.explorewithme.request.repository.RequestRepository;
 import ru.practicum.explorewithme.user.model.User;
 
+import static java.util.stream.Collectors.*;
+import static ru.practicum.explorewithme.request.RequestMapper.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,8 +36,8 @@ public class RequestServiceImpl implements RequestService {
   @Override
   public List<RequestDto> getAll(long userId) {
     return requestRepository.findAllByUserId(userId).stream()
-        .map(request -> RequestMapper.toDto(request))
-        .collect(Collectors.toList());
+        .map(request -> toDto(request))
+        .collect(toList());
   }
 
   @Override
@@ -80,7 +83,7 @@ public class RequestServiceImpl implements RequestService {
       eventRepository.save(event);
     }
 
-    return RequestMapper.toDto(request);
+    return toDto(request);
   }
 
   @Override
@@ -93,8 +96,8 @@ public class RequestServiceImpl implements RequestService {
 
     request.setStatus(RequestStatus.CANCELED);
     requestRepository.save(request);
-
-    return RequestMapper.toDto(request);
+log.info(String.valueOf(request.getId()));
+    return toDto(request);
   }
 
   @Override
@@ -106,8 +109,8 @@ public class RequestServiceImpl implements RequestService {
     }
 
     return requestRepository.findAllByEventId(eventId).stream()
-        .map(request -> RequestMapper.toDto(request))
-        .collect(Collectors.toList());
+        .map(request -> toDto(request))
+        .collect(toList());
   }
 
   @Override
@@ -128,20 +131,21 @@ public class RequestServiceImpl implements RequestService {
         }
       }
 
-      event.setConfirmedRequests(event.getConfirmedRequests() != null ? event.getConfirmedRequests() + 1 : 1);
+      if (event.getConfirmedRequests() != null) event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+      else event.setConfirmedRequests(1);
       requestRepository.save(s);
       eventRepository.save(event);
     });
 
     RequestStatusesDto updatedRequests = new RequestStatusesDto();
     if (updateRequestDto.getStatus() == RequestStatus.CONFIRMED) {
-      updatedRequests.setConfirmedRequests(requests.stream().map(request -> RequestMapper.toDto(request))
-              .collect(Collectors.toList()));
+      updatedRequests.setConfirmedRequests(requests.stream().map(request -> toDto(request))
+              .collect(toList()));
+      updatedRequests.setRejectedRequests(List.of());
     } else {
-      updatedRequests.setRejectedRequests(requests.stream().map(request -> RequestMapper.toDto(request))
-              .collect(Collectors.toList()));
+      updatedRequests.setRejectedRequests(requests.stream().map(request -> toDto(request))
+              .collect(toList()));
     }
-
     return updatedRequests;
   }
 }
