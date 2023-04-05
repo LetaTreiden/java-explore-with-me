@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   stats-server:
     build: stats-service/stats-server
@@ -10,7 +11,6 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
 
-
   stats-db:
     image: postgres:14-alpine
     container_name: stats-db
@@ -19,8 +19,7 @@ services:
     environment:
       - POSTGRES_DB=stats
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-
+      - POSTGRES_PASSWORD=root
 
   ewm-service:
     build: ewm-service
@@ -34,7 +33,6 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
 
-
   ewm-db:
     image: postgres:14-alpine
     container_name: ewm-db
@@ -43,4 +41,4 @@ services:
     environment:
       - POSTGRES_DB=ewm
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=root
