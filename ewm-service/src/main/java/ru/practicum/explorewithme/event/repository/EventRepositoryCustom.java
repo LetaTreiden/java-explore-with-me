@@ -1,9 +1,7 @@
 package ru.practicum.explorewithme.event.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import ru.practicum.explorewithme.event.dto.State;
 import ru.practicum.explorewithme.event.model.Event;
 
 public interface EventRepositoryCustom {
