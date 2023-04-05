@@ -10,6 +10,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -116,4 +117,5 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     return em.createQuery(cq).setFirstResult(from).setMaxResults(size).getResultList();
   }
+
 }

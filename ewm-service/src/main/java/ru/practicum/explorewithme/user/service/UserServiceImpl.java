@@ -1,9 +1,12 @@
 package ru.practicum.explorewithme.user.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.user.dto.UserDto;
 import ru.practicum.explorewithme.user.UserMapper;
@@ -29,7 +32,19 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public List<UserDto> findAllByIdIn(List<Long> ids, Integer from, Integer size) {
+
+    Pageable pageable = PageRequest.of(from, size);
+
+    return uRepo.findAllByIdIn(ids, pageable).stream()
+            .map(UserMapper::toUserDto)
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional
   public void delete(long userId) {
+    uRepo.getReferenceById(userId);
     uRepo.deleteById(userId);
   }
 }

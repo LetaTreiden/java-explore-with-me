@@ -40,7 +40,6 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  @Transactional
   public OutputEventDto create(long userId, InputEventDto inputEventDto) {
     if (inputEventDto.getEventDate() != null
         && inputEventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
@@ -65,7 +64,6 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  @Transactional
   public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
@@ -96,7 +94,6 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
-  @Transactional
   public OutputEventDto update(long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     Event updEvent = EventMapper.toEvent(inputEventDto, event);
