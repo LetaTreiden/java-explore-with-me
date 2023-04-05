@@ -40,6 +40,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @Transactional
   public OutputEventDto create(long userId, InputEventDto inputEventDto) {
     if (inputEventDto.getEventDate() != null
         && inputEventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
@@ -64,6 +65,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @Transactional
   public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
@@ -94,6 +96,7 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @Transactional
   public OutputEventDto update(long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     Event updEvent = EventMapper.toEvent(inputEventDto, event);
@@ -111,9 +114,11 @@ public class EventServiceImpl implements EventService {
 
     EventStatus newState;
     if (inputEventDto.getState() == State.PUBLISH_EVENT) newState = EventStatus.PUBLISHED;
+    else if (inputEventDto.getState() == State.CANCEL_REVIEW) newState = EventStatus.CANCELED;
     else newState = EventStatus.PENDING;
     updEvent.setState(newState);
-    updEvent.setPublishedOn(newState == EventStatus.PUBLISHED ? LocalDateTime.now() : null);
+    if (newState == EventStatus.PUBLISHED) updEvent.setPublishedOn(LocalDateTime.now());
+    else updEvent.setPublishedOn(null);
 
     eventRepository.save(updEvent);
     log.info(updEvent.getState().toString());
