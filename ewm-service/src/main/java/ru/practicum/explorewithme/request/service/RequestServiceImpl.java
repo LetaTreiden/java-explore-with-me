@@ -47,7 +47,6 @@ public class RequestServiceImpl implements RequestService {
 
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     if (event.getState() != EventStatus.PUBLISHED) {
-      RequestDto requestDto = new RequestDto();
       throw new ValidationException("You cannot add a request to event with status " + event.getState());
     }
 
