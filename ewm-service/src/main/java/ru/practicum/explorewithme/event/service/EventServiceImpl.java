@@ -67,6 +67,11 @@ public class EventServiceImpl implements EventService {
     @Override
     public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
+        log.info("event " + event.getState());
+        if (inputEventDto.getState() == null) {
+            //log.info(inputEventDto.getStateAction().toString());
+            inputEventDto.setState(inputEventDto.getStateAction());
+        }
 
         if (event.getInitiator().getId() != userId) {
             throw new IllegalStateException("You don't have such rights");
@@ -83,6 +88,7 @@ public class EventServiceImpl implements EventService {
 
         Event updEvent = EventMapper.toEvent(inputEventDto, event);
         eventRepository.save(updEvent);
+        log.info(updEvent.getState().toString());
         return EventMapper.toDto(updEvent);
     }
 
@@ -105,11 +111,11 @@ public class EventServiceImpl implements EventService {
         if (inputEventDto.getState() == null) {
             log.info("st act " + inputEventDto.getStateAction());
             inputEventDto.setState(inputEventDto.getStateAction());
-            log.info("state in input final " + inputEventDto.getState().toString());
+          //  log.info("state in input final " + inputEventDto.getState().toString());
         }
 
         if ((inputEventDto.getState() == State.PUBLISH_EVENT
-                || inputEventDto.getState() == State.REJECT_EVENT || inputEventDto.getState() == null)
+                || inputEventDto.getState() == State.REJECT_EVENT)
                 && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
             throw new ValidationException("Cannot update event with status " + event.getState());
         }
@@ -123,7 +129,7 @@ public class EventServiceImpl implements EventService {
         if (inputEventDto.getState() == State.PUBLISH_EVENT) {
             newState = EventStatus.PUBLISHED;
         } else if (inputEventDto.getState() == State.CANCEL_REVIEW
-             //   || inputEventDto.getState() == State.REJECT_EVENT
+                || inputEventDto.getState() == State.REJECT_EVENT
         ) {
             newState = EventStatus.CANCELED;
         } else {
