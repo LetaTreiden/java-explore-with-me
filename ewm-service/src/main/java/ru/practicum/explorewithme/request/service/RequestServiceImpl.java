@@ -7,10 +7,11 @@ import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.explorewithme.event.dto.EventStatus;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
+import ru.practicum.explorewithme.request.RequestMapper;
 import ru.practicum.explorewithme.request.dto.UpdateRequestDto;
 import ru.practicum.explorewithme.request.dto.RequestDto;
 import ru.practicum.explorewithme.request.model.RequestStatus;
@@ -94,7 +95,7 @@ public class RequestServiceImpl implements RequestService {
 
     request.setStatus(RequestStatus.CANCELED);
     requestRepository.save(request);
-log.info(String.valueOf(request.getId()));
+    log.info(String.valueOf(request.getId()));
     return toDto(request);
   }
 
@@ -115,7 +116,7 @@ log.info(String.valueOf(request.getId()));
   public RequestStatusesDto update(long userId, long eventId,
                                    UpdateRequestDto updateRequestDto) {
     List<Request> requests = requestRepository.findAllByIdIn(updateRequestDto.getRequestIds());
-    log.info(requests.toString());
+    //log.info(requests.get(1).toString());
     requests.forEach(s -> {
       if (s.getStatus() != RequestStatus.PENDING) {
         throw new ValidationException("You cannot change request with status " + s.getStatus());
@@ -138,12 +139,13 @@ log.info(String.valueOf(request.getId()));
 
     RequestStatusesDto updatedRequests = new RequestStatusesDto();
     if (updateRequestDto.getStatus() == RequestStatus.CONFIRMED) {
-      updatedRequests.setConfirmedRequests(requests.stream().map(request -> toDto(request))
+      updatedRequests.setConfirmedRequests(requests.stream().map(RequestMapper::toDto)
               .collect(toList()));
       updatedRequests.setRejectedRequests(List.of());
     } else {
-      updatedRequests.setRejectedRequests(requests.stream().map(request -> toDto(request))
+      updatedRequests.setRejectedRequests(requests.stream().map(RequestMapper::toDto)
               .collect(toList()));
+      updatedRequests.setConfirmedRequests(List.of());
     }
     return updatedRequests;
   }

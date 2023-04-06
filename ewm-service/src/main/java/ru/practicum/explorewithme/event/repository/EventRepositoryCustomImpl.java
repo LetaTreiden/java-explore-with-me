@@ -14,7 +14,7 @@ import javax.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import ru.practicum.explorewithme.event.dto.EventStatus;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.request.model.Request;
 

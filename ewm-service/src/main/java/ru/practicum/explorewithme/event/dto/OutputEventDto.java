@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 import lombok.*;
 import ru.practicum.explorewithme.category.model.Category;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.user.model.User;
 
 @NoArgsConstructor

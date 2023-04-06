@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 
 import lombok.*;
+import ru.practicum.explorewithme.event.model.EventStatus;
 
 @Getter
 @Setter

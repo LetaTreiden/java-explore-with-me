@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.event.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +13,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.event.EventMapper;
-import ru.practicum.explorewithme.event.dto.EventStatus;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
 import ru.practicum.explorewithme.event.dto.OutputEventDto;
-import ru.practicum.explorewithme.event.dto.State;
+import ru.practicum.explorewithme.event.model.State;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
@@ -94,12 +95,22 @@ public class EventServiceImpl implements EventService {
   }
 
   @Override
+  @Transactional
   public OutputEventDto update(long eventId, InputEventDto inputEventDto) {
     Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
     Event updEvent = EventMapper.toEvent(inputEventDto, event);
 
+    log.info("ev "+event.getState().toString());
+    /*if (event.getState() == EventStatus.PENDING) {
+      inputEventDto.setState(State.PUBLISH_EVENT);
+    }
+     */
+    if (inputEventDto.getState() != null) {
+      log.info("input "+inputEventDto.getState().toString());
+    }
+
     if ((inputEventDto.getState() == State.PUBLISH_EVENT
-        || inputEventDto.getState() == State.REJECT_EVENT)
+        || inputEventDto.getState() == State.REJECT_EVENT || inputEventDto.getState() == null)
         && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
       throw new ValidationException("Cannot update event with status " + event.getState());
     }
@@ -113,6 +124,8 @@ public class EventServiceImpl implements EventService {
     if (inputEventDto.getState() == State.PUBLISH_EVENT) newState = EventStatus.PUBLISHED;
     else if (inputEventDto.getState() == State.CANCEL_REVIEW) newState = EventStatus.CANCELED;
     else newState = EventStatus.PENDING;
+    //if (event.getState() == EventStatus.PENDING) newState = EventStatus.PUBLISHED;
+    log.info("newstate " + newState);
     updEvent.setState(newState);
     if (newState == EventStatus.PUBLISHED) updEvent.setPublishedOn(LocalDateTime.now());
     else updEvent.setPublishedOn(null);

@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import lombok.*;
+import ru.practicum.explorewithme.event.model.State;
 
 @NoArgsConstructor
 @AllArgsConstructor

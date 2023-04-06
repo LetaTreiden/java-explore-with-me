@@ -34,7 +34,7 @@ public class UserController {
   public List<UserDto> getAll(@RequestParam(defaultValue = "") List<Long> id,
       @RequestParam(defaultValue = "0") int from,
       @RequestParam(defaultValue = "10") int size) {
-    return userService.findAllByIdIn(id, from, size);
+    return userService.getAll(id, from, size);
   }
 
   @DeleteMapping("/{userId}")

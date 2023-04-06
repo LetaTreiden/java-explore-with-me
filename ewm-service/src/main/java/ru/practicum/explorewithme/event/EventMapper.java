@@ -3,11 +3,15 @@ package ru.practicum.explorewithme.event;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Location;
+import ru.practicum.explorewithme.event.model.State;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public class EventMapper {
 
   public static OutputEventDto toDto(Event event) {
@@ -46,13 +50,23 @@ public class EventMapper {
   }
 
   public static Event toEvent(InputEventDto inputEventDto, Event event) {
+    log.info("right mapper");
     EventStatus newState = null;
     if (inputEventDto.getState() != null) {
-      newState = inputEventDto.getState() == State.CANCEL_REVIEW
-          ? EventStatus.CANCELED
-          : EventStatus.PENDING;
+      switch (inputEventDto.getState()) {
+        case CANCEL_REVIEW:
+        case DECLINE_EVENT:
+        case REJECT_EVENT:
+          newState = EventStatus.CANCELED;
+          break;
+        case PUBLISH_EVENT:
+          newState = EventStatus.PUBLISHED;
+          break;
+        case SEND_TO_REVIEW:
+          newState = EventStatus.PENDING;
+          break;
+      }
     }
-
     return Event.builder()
         .id(event.getId())
         .annotation(inputEventDto.getAnnotation() != null ? inputEventDto.getAnnotation() : event.getAnnotation())
