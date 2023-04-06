@@ -160,6 +160,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, String rangeStart,
                                        String rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
+        log.info("start to search");
         return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)
                 .stream()
                 .map(EventMapper::toFullDto)

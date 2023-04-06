@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,6 +24,7 @@ import ru.practicum.explorewithme.event.service.EventService;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class EventController {
 
   private final EventService eventService;
@@ -80,13 +82,16 @@ public class EventController {
                                           @RequestParam(defaultValue = "0") int from,
                                           @RequestParam(defaultValue = "10") int size,
                                           HttpServletRequest request) {
-    statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+    log.info("hit start");
+   // statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
+       //     LocalDateTime.now()));
+    log.info("hit end");
     return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
   }
 
   @GetMapping("/events/{eventId}")
   public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
-    statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
+  //  statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
     return eventService.getFullInfoById(eventId);
   }
 }
