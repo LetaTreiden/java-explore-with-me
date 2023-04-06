@@ -97,17 +97,15 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public OutputEventDto update(long eventId, InputEventDto inputEventDto) {
+        log.info("update event");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
         Event updEvent = EventMapper.toEvent(inputEventDto, event);
 
         log.info("ev " + event.getState().toString());
-    if (event.getState() == EventStatus.PENDING) {
-      log.info("st act" + inputEventDto.getStateAction());
-      inputEventDto.setState(State.PUBLISH_EVENT);
-    }
-
-        if (inputEventDto.getState() != null) {
-            log.info("input " + inputEventDto.getState().toString());
+        if (inputEventDto.getState() == null) {
+            log.info("st act " + inputEventDto.getStateAction());
+            inputEventDto.setState(inputEventDto.getStateAction());
+            log.info("state in input final " + inputEventDto.getState().toString());
         }
 
         if ((inputEventDto.getState() == State.PUBLISH_EVENT
@@ -122,11 +120,17 @@ public class EventServiceImpl implements EventService {
         }
 
         EventStatus newState;
-        if (inputEventDto.getState() == State.PUBLISH_EVENT) newState = EventStatus.PUBLISHED;
-        else if (inputEventDto.getState() == State.CANCEL_REVIEW) newState = EventStatus.CANCELED;
-        else newState = EventStatus.PENDING;
-        //if (event.getState() == EventStatus.PENDING) newState = EventStatus.PUBLISHED;
-        log.info("newstate " + newState);
+        if (inputEventDto.getState() == State.PUBLISH_EVENT) {
+            newState = EventStatus.PUBLISHED;
+        } else if (inputEventDto.getState() == State.CANCEL_REVIEW
+             //   || inputEventDto.getState() == State.REJECT_EVENT
+        ) {
+            newState = EventStatus.CANCELED;
+        } else {
+            newState = EventStatus.PENDING;
+        }
+
+        log.info("new state " + newState);
         updEvent.setState(newState);
         if (newState == EventStatus.PUBLISHED) updEvent.setPublishedOn(LocalDateTime.now());
         else updEvent.setPublishedOn(null);
