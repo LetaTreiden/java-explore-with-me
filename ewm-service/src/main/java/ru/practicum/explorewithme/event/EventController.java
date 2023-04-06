@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.event;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
