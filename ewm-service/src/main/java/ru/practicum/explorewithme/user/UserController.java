@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.user;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import ru.practicum.explorewithme.user.service.UserService;
 @RestController
 @RequestMapping(path = "/admin/users")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class UserController {
 
   private final UserService userService;
@@ -34,12 +36,13 @@ public class UserController {
   public List<UserDto> getAll(@RequestParam(defaultValue = "") List<Long> id,
       @RequestParam(defaultValue = "0") int from,
       @RequestParam(defaultValue = "10") int size) {
-    return userService.getAll(id, from, size);
+    log.info("get all by ids");
+    return userService.getAllTwo(id, from, size);
   }
 
   @DeleteMapping("/{userId}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void delete(@PathVariable long userId) {
+  public void delete(@PathVariable long userId) throws NoSuchFieldException {
     userService.delete(userId);
   }
 }

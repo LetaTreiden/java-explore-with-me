@@ -1,6 +1,9 @@
 package ru.practicum.explorewithme.user.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
@@ -35,9 +38,15 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public List<UserDto> getAll(List<Long> id, int from, int size) {
-    Pageable pageable = PageRequest.of(from / size, size);
-   // return uRepo.getUsers(id, from, size);
-    log.info("Возврат списка пользователей");
+    //Pageable pageable = PageRequest.of(from / size, size);
+    Pageable pageable = PageRequest.of(from, size);
+   List<User> users = uRepo.findAllByIdIn(id, pageable);
+   List<UserDto> userDtos = new ArrayList<>();
+   for (User u : users) {
+     userDtos.add(UserMapper.toUserDto(u));
+   }
+   return userDtos;
+    /*log.info("Возврат списка пользователей");
     if (id.isEmpty()) {
       return uRepo.findAll().stream()
               .map(UserMapper::toUserDto)
@@ -47,8 +56,16 @@ public class UserServiceImpl implements UserService {
               .map(UserMapper::toUserDto)
               .collect(Collectors.toList());
     }
+
+     */
   }
 
+  @Override
+  public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
+    Pageable pageable = PageRequest.of(from, size);
+    log.info(pageable.toString());
+    return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
+  }
   @Override
   public List<UserDto> findAllByIdIn(List<Long> ids, Integer from, Integer size) {
 
@@ -61,8 +78,13 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void delete(long userId) {
-    uRepo.getReferenceById(userId);
-    uRepo.deleteById(userId);
+  public void delete(long userId) throws NoSuchElementException {
+    Optional<User> user = uRepo.findById(userId);
+    if (user.isEmpty()) {
+      throw new NoSuchElementException("User not found");
+    }
+    User user1 = uRepo.getReferenceById(userId);
+    log.info(user1.toString());
+    uRepo.deleteById(user1.getId());
   }
 }

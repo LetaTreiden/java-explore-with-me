@@ -9,7 +9,9 @@ public interface UserService {
 
   List<UserDto> getAll(List<Long> ids, int from, int size);
 
+    List<UserDto> getAllTwo(List<Long> id, int from, int size);
+
     List<UserDto> findAllByIdIn(List<Long> ids, Integer from, Integer size);
 
-    void delete(long userId);
+    void delete(long userId) throws NoSuchFieldException;
 }

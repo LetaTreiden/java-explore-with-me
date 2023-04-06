@@ -6,6 +6,9 @@ import lombok.NonNull;
 import ru.practicum.explorewithme.user.dto.UserDto;
 import ru.practicum.explorewithme.user.model.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
@@ -23,5 +26,13 @@ public class UserMapper {
         userDto.getName(),
         userDto.getEmail()
     );
+  }
+
+  public static List<UserDto> mapToUserDto(Iterable<User> users) {
+    List<UserDto> dtos = new ArrayList<>();
+    for (User user : users) {
+      dtos.add(toUserDto(user));
+    }
+    return dtos;
   }
 }
