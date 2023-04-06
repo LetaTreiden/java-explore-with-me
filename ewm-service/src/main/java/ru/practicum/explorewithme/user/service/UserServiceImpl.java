@@ -62,7 +62,8 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public void delete(long userId) {
-    uRepo.getReferenceById(userId);
-    uRepo.deleteById(userId);
+    User user = uRepo.getReferenceById(userId);
+    uRepo.deleteById(user.getId());
   }
 }
+
