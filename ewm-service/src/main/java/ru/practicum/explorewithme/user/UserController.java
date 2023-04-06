@@ -33,11 +33,12 @@ public class UserController {
   }
 
   @GetMapping
-  public List<UserDto> getAll(@RequestParam(defaultValue = "") List<Long> id,
+  public List<UserDto> getAll(@RequestParam List<Long> ids,
       @RequestParam(defaultValue = "0") int from,
       @RequestParam(defaultValue = "10") int size) {
+    log.info(ids.toString());
     log.info("get all by ids");
-    return userService.getAllTwo(id, from, size);
+    return userService.getAllTwo(ids, from, size);
   }
 
   @DeleteMapping("/{userId}")

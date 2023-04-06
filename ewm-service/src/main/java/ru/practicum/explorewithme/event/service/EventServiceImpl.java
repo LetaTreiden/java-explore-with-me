@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.category.model.Category;
+import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.event.EventMapper;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
@@ -16,6 +17,7 @@ import ru.practicum.explorewithme.event.model.State;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
 import ru.practicum.explorewithme.user.model.User;
+import ru.practicum.explorewithme.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -30,6 +32,9 @@ import java.util.stream.Collectors;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
+
+    private final CategoryRepository categoryRepository;
 
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
@@ -41,15 +46,17 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public OutputEventDto create(long userId, InputEventDto inputEventDto) {
-        if (inputEventDto.getEventDate() != null
-                && inputEventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
-            throw new ValidationException("Something wrong with date");
+        if (inputEventDto.getEventDate().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Неверная дата");
         }
-
-        Event event = EventMapper.toEvent(inputEventDto);
-        event.setInitiator(new User(userId));
-        event.setCategory(new Category(Long.valueOf(inputEventDto.getCategory())));
+        User user = checkUserExistence(userId);
+        Category category = checkCategoryExistence(Long.valueOf(inputEventDto.getCategory()));
+        log.info(inputEventDto.toString());
+        Event event = (EventMapper.toEvent(inputEventDto));
+        event.setInitiator(user);
+        event.setCategory(category);
         event.setState(EventStatus.PENDING);
         eventRepository.save(event);
         return EventMapper.toDto(event);
@@ -57,9 +64,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public OutputEventDto getById(long userId, long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-        event.setViews(event.getViews() != null ? event.getViews() + 1 : 1);
-        eventRepository.save(event);
+        Event event = checkEventExistence(eventId);
+        /*if (event.getViews() != null) {
+            event.setViews(event.getViews() + 1);
+        } else event.setViews(1L);
+
+         */
+      //  eventRepository.save(event);
 
         return EventMapper.toDto(event);
     }
@@ -111,7 +122,7 @@ public class EventServiceImpl implements EventService {
         if (inputEventDto.getState() == null) {
             log.info("st act " + inputEventDto.getStateAction());
             inputEventDto.setState(inputEventDto.getStateAction());
-          //  log.info("state in input final " + inputEventDto.getState().toString());
+            //  log.info("state in input final " + inputEventDto.getState().toString());
         }
 
         if ((inputEventDto.getState() == State.PUBLISH_EVENT
@@ -163,5 +174,26 @@ public class EventServiceImpl implements EventService {
         eventRepository.save(event);
 
         return EventMapper.toFullDto(event);
+    }
+
+    private User checkUserExistence(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            throw new NoSuchElementException("Пользователь, по которому запрашиваются события, не существует");
+        });
+        return user;
+    }
+
+    private Event checkEventExistence(Long eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            throw new NoSuchElementException("Событие не существует");
+        });
+        return event;
+    }
+
+    private Category checkCategoryExistence(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> {
+            throw new NoSuchElementException("Категория не существует");
+        });
+        return category;
     }
 }

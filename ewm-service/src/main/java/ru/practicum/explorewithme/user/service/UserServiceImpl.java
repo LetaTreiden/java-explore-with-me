@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewithme.exceptions.ValidationException;
 import ru.practicum.explorewithme.user.UserMapper;
 import ru.practicum.explorewithme.user.dto.UserDto;
 import ru.practicum.explorewithme.user.model.User;
@@ -63,7 +64,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
+      /*  if (id.isEmpty()) {
+            throw new ValidationException("for list id's list cannot be null");
+        }
+
+       */
         log.info(pageable.toString());
+        log.info("id size " + id.size());
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
     }
 
