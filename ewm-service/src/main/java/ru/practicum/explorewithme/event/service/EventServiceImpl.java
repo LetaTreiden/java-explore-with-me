@@ -101,10 +101,11 @@ public class EventServiceImpl implements EventService {
         Event updEvent = EventMapper.toEvent(inputEventDto, event);
 
         log.info("ev " + event.getState().toString());
-    /*if (event.getState() == EventStatus.PENDING) {
+    if (event.getState() == EventStatus.PENDING) {
+      log.info("st act" + inputEventDto.getStateAction());
       inputEventDto.setState(State.PUBLISH_EVENT);
     }
-     */
+
         if (inputEventDto.getState() != null) {
             log.info("input " + inputEventDto.getState().toString());
         }
