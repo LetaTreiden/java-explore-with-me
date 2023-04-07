@@ -68,8 +68,9 @@ public class EventMapper {
     }
     return Event.builder()
         .id(event.getId())
-        .annotation(inputEventDto.getAnnotation() != null ? inputEventDto.getAnnotation() : event.getAnnotation())
-        .description(inputEventDto.getDescription() != null
+        .annotation(inputEventDto.getAnnotation() != null && !inputEventDto.getAnnotation().isBlank()
+                ? inputEventDto.getAnnotation() : event.getAnnotation())
+        .description(inputEventDto.getDescription() != null && !inputEventDto.getDescription().isBlank()
             ? inputEventDto.getDescription()
             : event.getDescription())
         .eventDate(inputEventDto.getEventDate() != null ? inputEventDto.getEventDate() : event.getEventDate())
@@ -80,7 +81,8 @@ public class EventMapper {
         .requestModeration(inputEventDto.getRequestModeration() != null
             ? inputEventDto.getRequestModeration()
             : event.getRequestModeration())
-        .title(inputEventDto.getTitle() != null ? inputEventDto.getTitle() : event.getTitle())
+        .title(inputEventDto.getTitle() != null && !inputEventDto.getTitle().isBlank()
+                ? inputEventDto.getTitle() : event.getTitle())
         .location(inputEventDto.getLocation() != null ?
                 new Location(inputEventDto.getLocation().getLat(), inputEventDto.getLocation().getLon())
                 : event.getLocation())
