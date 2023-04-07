@@ -1,6 +1,8 @@
 package ru.practicum.explorewithme.event;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,7 +77,7 @@ public class EventMapper {
             : event.getDescription())
         .eventDate(inputEventDto.getEventDate() != null ? inputEventDto.getEventDate() : event.getEventDate())
         .paid(inputEventDto.getPaid() != null ? inputEventDto.getPaid() : event.getPaid())
-        .participantLimit(inputEventDto.getParticipantLimit() != null
+        .participantLimit(!Objects.equals(inputEventDto.getParticipantLimit(), null)
             ? inputEventDto.getParticipantLimit()
             : event.getParticipantLimit())
         .requestModeration(inputEventDto.getRequestModeration() != null
