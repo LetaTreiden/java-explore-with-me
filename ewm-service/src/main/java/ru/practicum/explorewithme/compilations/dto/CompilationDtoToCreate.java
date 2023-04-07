@@ -16,7 +16,7 @@ import lombok.Setter;
 public class CompilationDtoToCreate {
 
   private List<Long> events;
-  private Boolean pinned;
+  private boolean pinned;
 
   @NotBlank
   private String title;

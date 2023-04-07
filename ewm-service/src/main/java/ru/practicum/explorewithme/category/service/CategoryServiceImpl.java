@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,24 +14,27 @@ import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
 
   @Override
+  @Transactional
   public CategoryDto create(CategoryDto categoryDto) {
     Category category = categoryRepository.save(CategoryMapper.toCategory(categoryDto));
     return CategoryMapper.toDto(category);
   }
 
   @Override
+  @Transactional
   public void delete(long categoryId) {
     categoryRepository.deleteById(categoryId);
   }
 
   @Override
+  @Transactional
   public CategoryDto update(long categoryId, CategoryDto categoryDto) {
     Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchElementException());
     category.setName(categoryDto.getName());

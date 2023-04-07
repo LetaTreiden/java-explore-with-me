@@ -35,7 +35,8 @@ public class CompilationMapper {
                                           Compilation previousCompilation) {
     return Compilation.builder()
         .id(previousCompilation.getId())
-        .title(compilationDto.getTitle() != null ? compilationDto.getTitle() : previousCompilation.getTitle())
+        .title(compilationDto.getTitle() != null && !compilationDto.getTitle().isBlank()
+                ? compilationDto.getTitle() : previousCompilation.getTitle())
         .pinned(compilationDto.getPinned() != null ? compilationDto.getPinned() : previousCompilation.getPinned())
         .events(compilationDto.getEvents() != null
             ? compilationDto.getEvents().stream().map(Event::new).collect(Collectors.toSet())
