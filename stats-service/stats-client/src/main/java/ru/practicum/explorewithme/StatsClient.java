@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class StatsClient extends BaseClient {
 
     @Autowired
-    public StatsClient(@Value("${STAT_SERVER_URL}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(@Value("${stat_server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
@@ -28,6 +29,9 @@ public class StatsClient extends BaseClient {
 
     public ResponseEntity<Object> hit(HitDto hitDto) {
         log.info("fine");
+
+            log.info("пусто" + hitDto.getApp());
+
         return post("/hit", hitDto);
     }
 

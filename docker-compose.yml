@@ -2,7 +2,7 @@ version: '3.8'
 services:
   stats-server:
     build: stats-service/stats-server
-    image: letaat/statserv:v0.0.3
+    image: letaat/statsserv
     container_name: stats-server
     ports:
       - "9090:9090"
@@ -12,7 +12,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
 
   stats-db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     container_name: stats-db
     ports:
       - "6541:5432"
@@ -23,7 +23,7 @@ services:
 
   ewm-service:
     build: ewm-service
-    image: letaat/ewmserv:v0.1.6
+    image: letaat/ewmserv:v0.1.8
     container_name: ewm-service
     ports:
       - "8080:8080"
@@ -31,12 +31,13 @@ services:
       - stats-server
       - ewm-db
     environment:
+      - STAT_SERVER_URL=htpp://stats-server:9090
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
       - SPRING_DATASOURCE_USER=postgres
       - SPRING_DATASOURCE_PASSWORD=root
 
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:15-alpine
     container_name: ewm-db
     ports:
       - "6542:5432"

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.HitToRepo;
+import ru.practicum.explorewithme.model.Stats;
 import ru.practicum.explorewithme.model.StatsMapper;
 import ru.practicum.explorewithme.repository.StatsRepository;
 
@@ -22,7 +23,10 @@ public class StatsService {
 
   public void hit(HitDto hitDto) {
     log.info("service");
-    statsRepository.save(statsMapper.toStats(hitDto));
+    Stats stats = statsMapper.toStats(hitDto);
+    log.info("stats done");
+    statsRepository.save(stats);
+    log.info(stats.getId().toString());
   }
 
   public HitStatDto[] getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {

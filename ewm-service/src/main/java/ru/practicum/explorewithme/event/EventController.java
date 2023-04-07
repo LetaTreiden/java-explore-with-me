@@ -85,8 +85,6 @@ public class EventController {
     log.info("hit start");
     statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
             LocalDateTime.now()));
-    //service.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
-            //LocalDateTime.now()));
     log.info("hit end");
     return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
   }

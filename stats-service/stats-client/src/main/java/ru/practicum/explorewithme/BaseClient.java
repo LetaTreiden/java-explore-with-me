@@ -3,6 +3,7 @@ package ru.practicum.explorewithme;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,6 +13,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+@Slf4j
 public class BaseClient {
 
   protected final RestTemplate rest;
@@ -29,11 +31,13 @@ public class BaseClient {
   }
 
   protected <T> ResponseEntity<Object> post(String path, T body) {
+    log.info("post1");
     return post(path, null, body);
   }
 
   protected <T> ResponseEntity<Object> post(String path, @Nullable Map<String, Object> parameters,
                                             T body) {
+    log.info("post2");
     return makeAndSendRequest(HttpMethod.POST, path, parameters, body);
   }
 
