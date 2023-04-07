@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll(List<Long> id, int from, int size) {
-        //Pageable pageable = PageRequest.of(from / size, size);
         Pageable pageable = PageRequest.of(from, size);
         List<User> users = uRepo.findAllByIdIn(id, pageable);
         List<UserDto> userDtos = new ArrayList<>();
@@ -46,28 +45,11 @@ public class UserServiceImpl implements UserService {
             userDtos.add(UserMapper.toUserDto(u));
         }
         return userDtos;
-    /*log.info("Возврат списка пользователей");
-    if (id.isEmpty()) {
-      return uRepo.findAll().stream()
-              .map(UserMapper::toUserDto)
-              .collect(Collectors.toList());
-    } else {
-      return uRepo.findAllByIdIn(id, pageable).stream()
-              .map(UserMapper::toUserDto)
-              .collect(Collectors.toList());
-    }
-
-     */
     }
 
     @Override
     public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
-      /*  if (id.isEmpty()) {
-            throw new ValidationException("for list id's list cannot be null");
-        }
-
-       */
         log.info(pageable.toString());
         log.info("id size " + id.size());
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
