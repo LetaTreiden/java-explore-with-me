@@ -23,7 +23,7 @@ services:
 
   ewm-service:
     build: ewm-service
-    image: letaat/ewmserv:v0.1.8
+    image: letaat/ewmserv:v0.1.9
     container_name: ewm-service
     ports:
       - "8080:8080"
