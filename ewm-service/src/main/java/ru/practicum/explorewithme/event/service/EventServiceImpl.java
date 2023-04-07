@@ -65,13 +65,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public OutputEventDto getById(long userId, long eventId) {
         Event event = checkEventExistence(eventId);
-        /*if (event.getViews() != null) {
-            event.setViews(event.getViews() + 1);
-        } else event.setViews(1L);
-
-         */
-      //  eventRepository.save(event);
-
         return EventMapper.toDto(event);
     }
 
@@ -80,7 +73,6 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
         log.info("event " + event.getState());
         if (inputEventDto.getState() == null) {
-            //log.info(inputEventDto.getStateAction().toString());
             inputEventDto.setState(inputEventDto.getStateAction());
         }
 
@@ -122,7 +114,6 @@ public class EventServiceImpl implements EventService {
         if (inputEventDto.getState() == null) {
             log.info("st act " + inputEventDto.getStateAction());
             inputEventDto.setState(inputEventDto.getStateAction());
-            //  log.info("state in input final " + inputEventDto.getState().toString());
         }
 
         if ((inputEventDto.getState() == State.PUBLISH_EVENT
@@ -178,23 +169,20 @@ public class EventServiceImpl implements EventService {
     }
 
     private User checkUserExistence(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> {
+        return userRepository.findById(id).orElseThrow(() -> {
             throw new NoSuchElementException("Пользователь, по которому запрашиваются события, не существует");
         });
-        return user;
     }
 
     private Event checkEventExistence(Long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+        return eventRepository.findById(eventId).orElseThrow(() -> {
             throw new NoSuchElementException("Событие не существует");
         });
-        return event;
     }
 
     private Category checkCategoryExistence(Long categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> {
+        return categoryRepository.findById(categoryId).orElseThrow(() -> {
             throw new NoSuchElementException("Категория не существует");
         });
-        return category;
     }
 }
