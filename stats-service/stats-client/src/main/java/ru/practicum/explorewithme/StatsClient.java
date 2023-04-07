@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class StatsClient extends BaseClient {
 
     @Autowired
@@ -25,6 +27,7 @@ public class StatsClient extends BaseClient {
     }
 
     public ResponseEntity<Object> hit(HitDto hitDto) {
+        log.info("fine");
         return post("/hit", hitDto);
     }
 
