@@ -20,4 +20,8 @@ public class CompilationDtoToCreate {
 
   @NotBlank
   private String title;
+
+  public Boolean getPinned() {
+    return pinned;
+  }
 }
