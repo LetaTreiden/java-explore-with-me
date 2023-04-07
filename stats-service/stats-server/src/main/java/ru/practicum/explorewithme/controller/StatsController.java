@@ -21,6 +21,7 @@ public class StatsController {
   private final StatsService statsService;
 
   @PostMapping("/hit")
+  @ResponseStatus(HttpStatus.CREATED)
   public void hit(@RequestBody HitDto hitDto) {
     statsService.hit(hitDto);
   }
