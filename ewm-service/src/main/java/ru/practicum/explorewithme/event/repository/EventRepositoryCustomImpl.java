@@ -13,6 +13,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     private final EntityManager em;
+    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<Event> searchEvents(List<Long> users, List<String> states, List<Integer> categories,
@@ -31,6 +33,14 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         Root<Event> statsEntityRoot = cq.from(Event.class);
         List<Predicate> predicates = new ArrayList<>();
+
+        if (rangeStart != null) {
+            predicates.add(cb.greaterThan(statsEntityRoot.get("eventDate"), rangeStart));//,
+        }
+        if (rangeEnd != null) {
+            predicates.add(cb.lessThan(statsEntityRoot.get("eventDate"), rangeEnd));
+            // LocalDateTime.parse(rangeEnd, format)));
+        }
 
         if (users != null && !users.isEmpty()) {
             predicates.add(cb.isTrue(statsEntityRoot.get("initiator").get("id").in(users)));
@@ -60,6 +70,14 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
         Root<Event> statsEntityRoot = cq.from(Event.class);
         List<Predicate> predicates = new ArrayList<>();
+
+        if (rangeStart != null) {
+            predicates.add(cb.greaterThan(statsEntityRoot.get("eventDate"), rangeStart));//,
+        }
+        if (rangeEnd != null) {
+            predicates.add(cb.lessThan(statsEntityRoot.get("eventDate"), rangeEnd));
+                   // LocalDateTime.parse(rangeEnd, format)));
+        }
 
         if (text != null && !text.isBlank()) {
             var annotationLike = cb.like(statsEntityRoot.get("annotation"), "%" + text + "%");

@@ -55,9 +55,10 @@ public class EventController {
     public List<EventInfo> search(@RequestParam(required = false) List<Long> users,
                                   @RequestParam(required = false) List<String> states,
                                   @RequestParam(required = false) List<Integer> categories,
-                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime
-                                              rangeStart,
-                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                  @RequestParam(required = false) LocalDateTime rangeStart,
+                                  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                  @RequestParam(required = false) LocalDateTime rangeEnd,
                                   @RequestParam(defaultValue = "0") int from,
                                   @RequestParam(defaultValue = "10") int size) {
         return eventService.search(users, states, categories, rangeStart, rangeEnd, from, size);
@@ -72,10 +73,10 @@ public class EventController {
     public List<EventInfo> getFullEventInfo(@RequestParam(required = false) String text,
                                             @RequestParam(required = false) List<Integer> categories,
                                             @RequestParam(required = false) Boolean paid,
-                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                LocalDateTime rangeStart,
-                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-                                                LocalDateTime rangeEnd,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            @RequestParam(required = false) LocalDateTime rangeStart,
+                                            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                            @RequestParam(required = false) LocalDateTime rangeEnd,
                                             @RequestParam(required = false) Boolean onlyAvailable,
                                             @RequestParam(required = false) String sort,
                                             @RequestParam(defaultValue = "0") int from,
