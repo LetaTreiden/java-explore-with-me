@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS stats (
   uri varchar,
   ip varchar,
   timestamp timestamp,
-  id_hit serial constraint hit_pk key unique
+  id_hit int8 unique
 );
