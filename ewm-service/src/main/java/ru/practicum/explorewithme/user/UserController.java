@@ -33,7 +33,7 @@ public class UserController {
   }
 
   @GetMapping
-  public List<UserDto> getAll(@RequestParam List<Long> ids,
+  public List<UserDto> getAll(@RequestParam(required = false) List<Long> ids,
       @RequestParam(defaultValue = "0") int from,
       @RequestParam(defaultValue = "10") int size) {
     log.info(ids.toString());

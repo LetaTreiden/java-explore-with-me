@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 import lombok.*;
 import ru.practicum.explorewithme.event.model.State;
@@ -16,25 +18,42 @@ import ru.practicum.explorewithme.event.model.State;
 public class InputEventDto {
 
   @NotBlank
+  @Size(min = 1, max = 2000)
   private String annotation;
 
   @NotNull
   private Integer category;
 
+  @NotBlank
+  @Size(min = 1, max = 7000)
   private String description;
 
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
   private LocalDateTime eventDate;
 
   private Location location;
-  private Boolean paid;
-  private Integer participantLimit;
-  private Boolean requestModeration;
+  private boolean paid;
+
+  @PositiveOrZero
+  private int participantLimit;
+
+  private boolean requestModeration;
 
   @NotBlank
+  @Size(min = 1, max = 120)
   private String title;
+
   private State state;
-  private State stateAction;
+
+ // private State stateAction;
+
+  public Boolean getPaid() {
+    return paid;
+  }
+
+  public Boolean getRequestModeration() {
+    return requestModeration;
+  }
 
   @Data
   @Getter

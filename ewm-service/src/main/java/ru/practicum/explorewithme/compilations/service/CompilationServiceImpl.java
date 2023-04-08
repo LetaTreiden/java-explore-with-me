@@ -15,6 +15,7 @@ import ru.practicum.explorewithme.compilations.dto.CompilationDtoToUpdate;
 import ru.practicum.explorewithme.compilations.model.Compilation;
 import ru.practicum.explorewithme.compilations.repository.CompilationRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
+import ru.practicum.explorewithme.exceptions.ValidationException;
 
 @Service
 @Transactional
@@ -46,7 +47,11 @@ public class CompilationServiceImpl implements CompilationService {
   @Override
   public CompilationDto create(CompilationDtoToCreate compilationDtoToCreate) {
     Compilation compilation = CompilationMapper.toCompilation(compilationDtoToCreate);
-    compilation.setEvents(new HashSet<>(eRepo.findAllById(compilationDtoToCreate.getEvents())));
+    if (compilation != null) {
+      compilation.setEvents(new HashSet<>(eRepo.findAllById(compilationDtoToCreate.getEvents())));
+    } else {
+      throw new ValidationException("Collection cannot be null");
+    }
     cRepo.save(compilation);
     return CompilationMapper.toDto(compilation);
   }
