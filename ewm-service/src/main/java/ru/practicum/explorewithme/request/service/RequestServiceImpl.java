@@ -41,28 +41,40 @@ public class RequestServiceImpl implements RequestService {
 
   @Override
   public RequestDto create(long userId, long eventId) {
+    log.info("creating request");
     if (requestRepository.existsByEventIdAndUserId(eventId, userId)) {
       throw new ValidationException("Request already exists");
     }
-
-    Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
+    log.info("there is no such request yet");
+    Event event;
+    if (eventRepository.existsById(eventId)) {
+      event = eventRepository.getReferenceById(eventId);
+    } else {
+      log.info("This user id{} doesn't exists", userId);
+      throw new NoSuchElementException("There is no such user");
+    }
+    log.info("user {} exist", userId);
     if (event.getState() != EventStatus.PUBLISHED) {
       throw new ValidationException("You cannot add a request to event with status " + event.getState());
     }
+    log.info("you can do a request");
 
     if (event.getInitiator().getId() == userId) {
       throw new ValidationException("You are already invited:)");
     }
+    log.info("you wasn't invited yet");
 
     if (event.getParticipantLimit() != null) {
       if (event.getConfirmedRequests() != null && event.getConfirmedRequests() >= event.getParticipantLimit()) {
         throw new ValidationException("Too much participants");
       }
     }
+    log.info("there is enough places for participants");
 
     RequestStatus requestState;
     if (Boolean.TRUE.equals(event.getRequestModeration())) requestState = RequestStatus.PENDING;
     else requestState = RequestStatus.CONFIRMED;
+    log.info("Request status is {}", requestState);
 
     User user = new User();
     user.setId(userId);
@@ -73,15 +85,19 @@ public class RequestServiceImpl implements RequestService {
         .createdOn(LocalDateTime.now())
         .status(requestState)
         .build();
+    log.info("request created");
 
     requestRepository.save(request);
+    log.info("id is {}", request.getId());
 
     if (requestState == RequestStatus.CONFIRMED) {
       if (event.getConfirmedRequests() != null) event.setConfirmedRequests(event.getConfirmedRequests() + 1);
       else event.setConfirmedRequests(1);
       eventRepository.save(event);
+      log.info("confirmed requests of event id{} updated", eventId);
     }
 
+    log.info("request created!");
     return toDto(request);
   }
 
