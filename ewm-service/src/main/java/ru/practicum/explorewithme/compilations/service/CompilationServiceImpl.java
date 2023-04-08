@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.compilations.dto.CompilationDtoToCreate;
 import ru.practicum.explorewithme.compilations.dto.CompilationDto;
 import ru.practicum.explorewithme.compilations.CompilationMapper;
+import ru.practicum.explorewithme.compilations.dto.CompilationDtoToUpdate;
 import ru.practicum.explorewithme.compilations.model.Compilation;
 import ru.practicum.explorewithme.compilations.repository.CompilationRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
@@ -56,10 +57,10 @@ public class CompilationServiceImpl implements CompilationService {
   }
 
   @Override
-  public CompilationDto update(long compilationId, CompilationDtoToCreate compilationDtoToCreate) {
+  public CompilationDto update(long compilationId, CompilationDtoToUpdate dto) {
     Compilation prevComp = cRepo.findById(compilationId).orElseThrow(() -> new NoSuchElementException());
-    Compilation compilation = CompilationMapper.toUpdatedComp(compilationDtoToCreate, prevComp);
-    compilation.setEvents(new HashSet<>(eRepo.findAllById(compilationDtoToCreate.getEvents())));
+    Compilation compilation = CompilationMapper.toUpdatedComp(dto, prevComp);
+    compilation.setEvents(new HashSet<>(eRepo.findAllById(dto.getEvents())));
     cRepo.save(compilation);
     return CompilationMapper.toDto(compilation);
   }

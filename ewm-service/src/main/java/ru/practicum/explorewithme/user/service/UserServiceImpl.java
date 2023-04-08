@@ -50,6 +50,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
+        log.info(pageable.toString());
+        log.info("id size " + id.size());
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
     }
 

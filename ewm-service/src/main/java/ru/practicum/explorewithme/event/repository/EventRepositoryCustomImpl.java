@@ -23,7 +23,6 @@ import ru.practicum.explorewithme.request.model.Request;
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
   private final EntityManager em;
-  DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
   @Override
   public List<Event> searchEvents(List<Long> users, List<String> states, List<Integer> categories,
@@ -34,7 +33,7 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     Root<Event> statsEntityRoot = cq.from(Event.class);
     List<Predicate> predicates = new ArrayList<>();
 
-
+    var format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     if (rangeStart != null) {
       predicates.add(cb.greaterThan(statsEntityRoot.get("eventDate"),
           LocalDateTime.parse(rangeStart, format)));

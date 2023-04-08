@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.compilations.dto.CompilationDto;
 import ru.practicum.explorewithme.compilations.dto.CompilationDtoToCreate;
+import ru.practicum.explorewithme.compilations.dto.CompilationDtoToUpdate;
 import ru.practicum.explorewithme.compilations.model.Compilation;
 import ru.practicum.explorewithme.event.EventMapper;
 import ru.practicum.explorewithme.event.model.Event;
@@ -31,11 +32,11 @@ public class CompilationMapper {
         .build();
   }
 
-  public static Compilation toUpdatedComp(CompilationDtoToCreate compilationDto,
+  public static Compilation toUpdatedComp(CompilationDtoToUpdate compilationDto,
                                           Compilation previousCompilation) {
     return Compilation.builder()
         .id(previousCompilation.getId())
-        .title(compilationDto.getTitle() != null && !compilationDto.getTitle().isBlank()
+        .title(compilationDto.getTitle()  != null && !compilationDto.getTitle().isBlank()
                 ? compilationDto.getTitle() : previousCompilation.getTitle())
         .pinned(compilationDto.getPinned() != null ? compilationDto.getPinned() : previousCompilation.getPinned())
         .events(compilationDto.getEvents() != null

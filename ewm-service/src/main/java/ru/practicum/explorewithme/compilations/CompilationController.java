@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.explorewithme.compilations.dto.CompilationDtoToCreate;
 import ru.practicum.explorewithme.compilations.dto.CompilationDto;
+import ru.practicum.explorewithme.compilations.dto.CompilationDtoToUpdate;
 import ru.practicum.explorewithme.compilations.service.CompilationService;
 
 @RestController
@@ -49,7 +50,7 @@ public class CompilationController {
 
   @PatchMapping("/admin/compilations/{compilationId}")
   public CompilationDto update(@PathVariable long compilationId,
-      @RequestBody CompilationDtoToCreate compilationDtoToCreate) {
-    return compilationService.update(compilationId, compilationDtoToCreate);
+      @RequestBody CompilationDtoToUpdate compilationDto) {
+    return compilationService.update(compilationId, compilationDto);
   }
 }

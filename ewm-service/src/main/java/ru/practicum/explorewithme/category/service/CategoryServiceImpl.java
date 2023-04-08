@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import ru.practicum.explorewithme.category.repository.CategoryRepository;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
