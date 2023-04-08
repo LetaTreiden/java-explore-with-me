@@ -5,6 +5,7 @@ import ru.practicum.explorewithme.event.dto.InputEventDto;
 import ru.practicum.explorewithme.event.dto.OutputEventDto;
 import ru.practicum.explorewithme.event.dto.UpdateEventDto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface EventService {
@@ -17,13 +18,13 @@ public interface EventService {
 
     OutputEventDto update(long userId, long eventId, UpdateEventDto inputEventDto);
 
-    List<EventInfo> search(List<Long> users, List<String> states, List<Integer> categories, String rangeStart,
-                           String rangeEnd, int from, int size);
+    List<EventInfo> search(List<Long> users, List<String> states, List<Integer> categories, LocalDateTime rangeStart,
+                           LocalDateTime rangeEnd, int from, int size);
 
     OutputEventDto update(long eventId, UpdateEventDto inputEventDto);
 
-    List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, String rangeStart,
-                                String rangeEnd, Boolean onlyAvailable, String sort, int from, int size);
+    List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
+                                LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size);
 
     EventInfo getFullInfoById(long eventId);
 }

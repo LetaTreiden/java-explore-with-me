@@ -23,25 +23,15 @@ import java.util.stream.Collectors;
 public class EventRepositoryCustomImpl implements EventRepositoryCustom {
 
     private final EntityManager em;
-    DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<Event> searchEvents(List<Long> users, List<String> states, List<Integer> categories,
-                                    String rangeStart, String rangeEnd, int from, int size) {
+                                    LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         var cb = em.getCriteriaBuilder();
         CriteriaQuery<Event> cq = cb.createQuery(Event.class);
 
         Root<Event> statsEntityRoot = cq.from(Event.class);
         List<Predicate> predicates = new ArrayList<>();
-
-        if (rangeStart != null) {
-            predicates.add(cb.greaterThan(statsEntityRoot.get("eventDate"),
-                    LocalDateTime.parse(rangeStart, format)));
-        }
-        if (rangeEnd != null) {
-            predicates.add(cb.lessThan(statsEntityRoot.get("eventDate"),
-                    LocalDateTime.parse(rangeEnd, format)));
-        }
 
         if (users != null && !users.isEmpty()) {
             predicates.add(cb.isTrue(statsEntityRoot.get("initiator").get("id").in(users)));
@@ -64,23 +54,13 @@ public class EventRepositoryCustomImpl implements EventRepositoryCustom {
     }
 
     @Override
-    public List<Event> searchEvents(String text, List<Integer> categories, Boolean paid, String rangeStart,
-                                    String rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
+    public List<Event> searchEvents(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
+                                    LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
         var cb = em.getCriteriaBuilder();
         CriteriaQuery<Event> cq = cb.createQuery(Event.class);
 
         Root<Event> statsEntityRoot = cq.from(Event.class);
         List<Predicate> predicates = new ArrayList<>();
-
-        var format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        if (rangeStart != null) {
-            predicates.add(cb.greaterThan(statsEntityRoot.get("eventDate"),
-                    LocalDateTime.parse(rangeStart, format)));
-        }
-        if (rangeEnd != null) {
-            predicates.add(cb.lessThan(statsEntityRoot.get("eventDate"),
-                    LocalDateTime.parse(rangeEnd, format)));
-        }
 
         if (text != null && !text.isBlank()) {
             var annotationLike = cb.like(statsEntityRoot.get("annotation"), "%" + text + "%");

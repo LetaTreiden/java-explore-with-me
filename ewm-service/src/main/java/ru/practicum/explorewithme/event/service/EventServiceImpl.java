@@ -98,7 +98,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventInfo> search(List<Long> users, List<String> states, List<Integer> categories,
-                                  String rangeStart, String rangeEnd, int from, int size) {
+                                  LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         return eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size).stream()
                 .map(EventMapper::toFullDto)
                 .collect(Collectors.toList());
@@ -150,8 +150,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, String rangeStart,
-                                       String rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
+    public List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
+                                       LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
         log.info("start to search");
         return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)
                 .stream()
