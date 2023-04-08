@@ -55,11 +55,12 @@ public class EventController {
     public List<EventInfo> search(@RequestParam(required = false) List<Long> users,
                                   @RequestParam(required = false) List<String> states,
                                   @RequestParam(required = false) List<Integer> categories,
-                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime
+                                              rangeStart,
+                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                   @RequestParam(defaultValue = "0") int from,
                                   @RequestParam(defaultValue = "10") int size) {
-        return eventService.search(users, states, categories, start, end, from, size);
+        return eventService.search(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PatchMapping("/admin/events/{eventId}")
@@ -71,8 +72,10 @@ public class EventController {
     public List<EventInfo> getFullEventInfo(@RequestParam(required = false) String text,
                                             @RequestParam(required = false) List<Integer> categories,
                                             @RequestParam(required = false) Boolean paid,
-                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                LocalDateTime rangeStart,
+                                            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+                                                LocalDateTime rangeEnd,
                                             @RequestParam(required = false) Boolean onlyAvailable,
                                             @RequestParam(required = false) String sort,
                                             @RequestParam(defaultValue = "0") int from,
@@ -82,7 +85,7 @@ public class EventController {
         statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
                 LocalDateTime.now()));
         log.info("hit end");
-        return eventService.getFullInfo(text, categories, paid, start, end, onlyAvailable, sort, from, size);
+        return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     @GetMapping("/events/{eventId}")
