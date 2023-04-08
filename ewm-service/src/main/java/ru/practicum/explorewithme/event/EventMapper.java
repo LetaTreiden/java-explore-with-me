@@ -8,7 +8,6 @@ import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Location;
-import ru.practicum.explorewithme.user.UserMapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
@@ -46,53 +45,6 @@ public class EventMapper {
         .title(inputEventDto.getTitle())
         .createdOn(LocalDateTime.now())
         .location(new Location(inputEventDto.getLocation().getLat(), inputEventDto.getLocation().getLon()))
-        .build();
-  }
-
-  public static Event toEvent(InputEventDto inputEventDto, Event event) {
-    log.info("right mapper");
-    EventStatus newState = null;
-    if (inputEventDto.getState() != null) {
-      switch (inputEventDto.getState()) {
-        case CANCEL_REVIEW:
-        case DECLINE_EVENT:
-        case REJECT_EVENT:
-          newState = EventStatus.CANCELED;
-          break;
-        case PUBLISH_EVENT:
-          newState = EventStatus.PUBLISHED;
-          break;
-        case SEND_TO_REVIEW:
-          newState = EventStatus.PENDING;
-          break;
-      }
-    }
-    return Event.builder()
-        .id(event.getId())
-        .annotation(inputEventDto.getAnnotation() != null && !inputEventDto.getAnnotation().isBlank()
-                ? inputEventDto.getAnnotation() : event.getAnnotation())
-        .description(inputEventDto.getDescription() != null && !inputEventDto.getDescription().isBlank()
-            ? inputEventDto.getDescription()
-            : event.getDescription())
-        .eventDate(inputEventDto.getEventDate() != null ? inputEventDto.getEventDate() : event.getEventDate())
-        .paid(inputEventDto.getPaid() != null ? inputEventDto.getPaid() : event.getPaid())
-        .participantLimit(inputEventDto.getParticipantLimit() != null
-            ? inputEventDto.getParticipantLimit()
-            : event.getParticipantLimit())
-        .requestModeration(inputEventDto.getRequestModeration() != null
-            ? inputEventDto.getRequestModeration()
-            : event.getRequestModeration())
-        .title(inputEventDto.getTitle() != null && !inputEventDto.getTitle().isBlank()
-                ? inputEventDto.getTitle() : event.getTitle())
-        .location(inputEventDto.getLocation() != null ?
-                new Location(inputEventDto.getLocation().getLat(), inputEventDto.getLocation().getLon())
-                : event.getLocation())
-        .createdOn(event.getCreatedOn())
-        .state(newState != null ? newState : event.getState())
-        .initiator(event.getInitiator())
-        .category(event.getCategory())
-        .confirmedRequests(event.getConfirmedRequests())
-        .views(event.getViews())
         .build();
   }
 
