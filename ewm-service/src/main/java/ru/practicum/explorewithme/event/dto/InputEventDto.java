@@ -28,9 +28,11 @@ public class InputEventDto {
   @Size(min = 1, max = 7000)
   private String description;
 
+  @NotNull
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
   private LocalDateTime eventDate;
 
+  @NotNull
   private Location location;
   private boolean paid;
 
@@ -44,8 +46,6 @@ public class InputEventDto {
   private String title;
 
   private State state;
-
- // private State stateAction;
 
   public Boolean getPaid() {
     return paid;

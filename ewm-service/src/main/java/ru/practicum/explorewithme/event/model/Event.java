@@ -70,8 +70,8 @@ public class Event {
   private LocalDateTime createdOn;
 
   private LocalDateTime publishedOn;
-  private Integer confirmedRequests;
-  private Long views;
+ // private Integer confirmedRequests;
+ // private Long views;
 
   public Event(Long id) {
     this.id = id;

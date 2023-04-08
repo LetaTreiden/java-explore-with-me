@@ -50,7 +50,7 @@ public class ExceptionsHandler {
     @org.springframework.web.bind.annotation.ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleValidationException(final ValidationException e) {
-        log.info("smth wrong with argument, check and try again");
+        log.info("smth wrong with argument!, check and try again");
         return new ErrorResponse(HttpStatus.CONFLICT,
                 "Something wrong with argument",
                 e.getMessage(),

@@ -29,9 +29,17 @@ public class StatsClient extends BaseClient {
     public ResponseEntity<Object> hit(HitDto hitDto) {
         log.info("fine");
 
-            log.info("пусто" + hitDto.getApp());
-
         return post("/hit", hitDto);
+    }
+
+    public ResponseEntity<Object> getHits(String start, String end, String[] uri, boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "uri", uri,
+                "unique", unique
+        );
+        return get("/stats?start={start}&end={end}&uri={{uri}}&unique={unique}", parameters);
     }
 
     public ResponseEntity<Object> getStats(String start, String end, List<String> uris, Boolean unique) {

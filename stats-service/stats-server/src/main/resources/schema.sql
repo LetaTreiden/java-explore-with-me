@@ -3,5 +3,6 @@ CREATE TABLE IF NOT EXISTS stats (
   app varchar,
   uri varchar,
   ip varchar,
-  timestamp timestamp
+  timestamp timestamp,
+  id_hit serial constraint hit_pk primary key unique
 );

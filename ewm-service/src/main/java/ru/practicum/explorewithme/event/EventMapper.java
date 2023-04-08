@@ -29,8 +29,7 @@ public class EventMapper {
         .state(event.getState())
         .initiator(new OutputEventDto.User(event.getInitiator().getId(), event.getInitiator().getName()))
         .category(new OutputEventDto.Category(event.getCategory().getId(), event.getCategory().getName()))
-        .confirmedRequests(event.getConfirmedRequests())
-        .views(event.getViews())
+        .views(0L)
         .build();
   }
 
@@ -90,8 +89,6 @@ public class EventMapper {
             .state(newState != null ? newState : event.getState())
             .initiator(event.getInitiator())
             .category(event.getCategory())
-            .confirmedRequests(event.getConfirmedRequests())
-            .views(event.getViews())
             .build();
   }
 
@@ -111,8 +108,7 @@ public class EventMapper {
         .state(event.getState())
         .initiator(new EventInfo.User(event.getInitiator().getId(), event.getInitiator().getName()))
         .category(new EventInfo.Category(event.getCategory().getId(), event.getCategory().getName()))
-        .confirmedRequests(event.getConfirmedRequests())
-        .views(event.getViews())
+        .views(0L)
         .build();
   }
 }

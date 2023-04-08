@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.event.EventMapper;
@@ -36,6 +37,8 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     private final CategoryRepository categoryRepository;
+
+    private final StatsClient statsClient;
 
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
@@ -160,14 +163,14 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventInfo getFullInfoById(long eventId) {
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-        if (event.getViews() != null) event.setViews(event.getViews() + 1);
-        else event.setViews(1L);
-        eventRepository.save(event);
-
-        return EventMapper.toFullDto(event);
+    public EventInfo getFullInfoById(long eventId, int requests) {
+        EventInfo info = EventMapper.toFullDto(eventRepository.findById(eventId).orElseThrow(()
+                -> new NoSuchElementException()));
+        info.setConfirmedRequests(requests);
+        return info;
     }
+
+
 
     private User checkUserExistence(Long id) {
         return userRepository.findById(id).orElseThrow(() -> {

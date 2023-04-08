@@ -1,9 +1,12 @@
 package ru.practicum.explorewithme.event;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.StatsClient;
@@ -16,6 +19,7 @@ import ru.practicum.explorewithme.event.service.EventService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -25,6 +29,11 @@ public class EventController {
 
     private final EventService eventService;
     private final StatsClient statsClient;
+    private final LocalDateTime max = LocalDateTime.of(3023, 9, 19, 14, 5);
+
+    private final LocalDateTime min = LocalDateTime.of(1023, 9, 19, 14, 5);
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @GetMapping("/users/{userId}/events")
     public List<OutputEventDto> getAll(@PathVariable long userId,
@@ -84,14 +93,30 @@ public class EventController {
                                             HttpServletRequest request) {
         log.info("hit start");
         statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
-                LocalDateTime.now()));
+                LocalDateTime.now(), 0L));
         log.info("hit end");
         return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     @GetMapping("/events/{eventId}")
     public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
-        statsClient.hit(new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(), LocalDateTime.now()));
-        return eventService.getFullInfoById(eventId);
+        HitDto hitDto = new HitDto("ewm-service", request.getRequestURI(), request.getRemoteAddr(),
+                LocalDateTime.now(), 0L);
+        statsClient.hit(hitDto);
+        int requests = 0;
+        for (HitDto dto : viewsStats((int) eventId, hitDto)) {
+            requests++;
+        }
+        return eventService.getFullInfoById(eventId, requests);
+    }
+
+    private List<HitDto> viewsStats(int id, HitDto hit) {
+        String[] uris = new String[1];
+        uris[0] = "/events/" +id;
+        ResponseEntity<Object> hits = statsClient.getHits(min.format(formatter), max.format(formatter), uris,
+                false);
+        List<HitDto> hitList = new ObjectMapper().convertValue(hits.getBody(), new TypeReference<>() {
+        });
+        return hitList;
     }
 }
