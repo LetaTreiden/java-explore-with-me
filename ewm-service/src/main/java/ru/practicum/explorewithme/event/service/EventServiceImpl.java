@@ -11,6 +11,7 @@ import ru.practicum.explorewithme.event.EventMapper;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
 import ru.practicum.explorewithme.event.dto.OutputEventDto;
+import ru.practicum.explorewithme.event.dto.UpdateEventDto;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.State;
@@ -69,11 +70,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public OutputEventDto update(long userId, long eventId, InputEventDto inputEventDto) {
+    public OutputEventDto update(long userId, long eventId, UpdateEventDto dto) {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
         log.info("event " + event.getState());
-        if (inputEventDto.getState() == null) {
-            inputEventDto.setState(inputEventDto.getStateAction());
+        if (dto.getState() == null) {
+            dto.setState(dto.getStateAction());
         }
 
         if (event.getInitiator().getId() != userId) {
@@ -84,12 +85,12 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Cannot update event with status " + event.getState());
         }
 
-        if (inputEventDto.getEventDate() != null
-                && inputEventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
+        if (dto.getEventDate() != null
+                && dto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
             throw new ValidationException("Something wrong with date");
         }
 
-        Event updEvent = EventMapper.toEvent(inputEventDto, event);
+        Event updEvent = EventMapper.toEvent(dto, event);
         eventRepository.save(updEvent);
         log.info(updEvent.getState().toString());
         return EventMapper.toDto(updEvent);
@@ -105,33 +106,33 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public OutputEventDto update(long eventId, InputEventDto inputEventDto) {
+    public OutputEventDto update(long eventId, UpdateEventDto eventDto) {
         log.info("update event");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-        Event updEvent = EventMapper.toEvent(inputEventDto, event);
+        Event updEvent = EventMapper.toEvent(eventDto, event);
 
         log.info("ev " + event.getState().toString());
-        if (inputEventDto.getState() == null) {
-            log.info("st act " + inputEventDto.getStateAction());
-            inputEventDto.setState(inputEventDto.getStateAction());
+        if (eventDto.getState() == null) {
+            log.info("st act " + eventDto.getStateAction());
+            eventDto.setState(eventDto.getStateAction());
         }
 
-        if ((inputEventDto.getState() == State.PUBLISH_EVENT
-                || inputEventDto.getState() == State.REJECT_EVENT)
+        if ((eventDto.getState() == State.PUBLISH_EVENT
+                || eventDto.getState() == State.REJECT_EVENT)
                 && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
             throw new ValidationException("Cannot update event with status " + event.getState());
         }
 
-        if (inputEventDto.getEventDate() != null
-                && inputEventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
+        if (eventDto.getEventDate() != null
+                && eventDto.getEventDate().isBefore(LocalDateTime.now().minusHours(2))) {
             throw new ValidationException("Something wrong with date");
         }
 
         EventStatus newState;
-        if (inputEventDto.getState() == State.PUBLISH_EVENT) {
+        if (eventDto.getState() == State.PUBLISH_EVENT) {
             newState = EventStatus.PUBLISHED;
-        } else if (inputEventDto.getState() == State.CANCEL_REVIEW
-                || inputEventDto.getState() == State.REJECT_EVENT
+        } else if (eventDto.getState() == State.CANCEL_REVIEW
+                || eventDto.getState() == State.REJECT_EVENT
         ) {
             newState = EventStatus.CANCELED;
         } else {

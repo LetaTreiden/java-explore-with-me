@@ -20,6 +20,7 @@ import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
 import ru.practicum.explorewithme.event.dto.OutputEventDto;
+import ru.practicum.explorewithme.event.dto.UpdateEventDto;
 import ru.practicum.explorewithme.event.service.EventService;
 
 @RestController
@@ -51,8 +52,8 @@ public class EventController {
   @PatchMapping("/users/{userId}/events/{eventId}")
   public OutputEventDto update(@PathVariable long userId,
       @PathVariable long eventId,
-      @RequestBody InputEventDto inputEventDto) {
-    return eventService.update(userId, eventId, inputEventDto);
+      @RequestBody UpdateEventDto eventDto) {
+    return eventService.update(userId, eventId, eventDto);
   }
 
   @GetMapping("/admin/events")
@@ -67,8 +68,8 @@ public class EventController {
   }
 
   @PatchMapping("/admin/events/{eventId}")
-  public OutputEventDto adminUpdate(@PathVariable long eventId, @RequestBody InputEventDto inputEventDto) {
-    return eventService.update(eventId, inputEventDto);
+  public OutputEventDto adminUpdate(@PathVariable long eventId, @RequestBody UpdateEventDto eventDto) {
+    return eventService.update(eventId, eventDto);
   }
 
   @GetMapping("/events")

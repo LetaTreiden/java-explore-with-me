@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import ru.practicum.explorewithme.category.repository.CategoryRepository;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryServiceImpl implements CategoryService {
 
   private final CategoryRepository categoryRepository;
@@ -34,7 +36,13 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional
   public CategoryDto update(long categoryId, CategoryDto categoryDto) {
-    Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchElementException());
+    Category category;
+    if (categoryRepository.existsById(categoryId)) {
+      category = categoryRepository.getReferenceById(categoryId);
+    } else {
+      log.info("There is no such category! Try with other id");
+      throw new NoSuchElementException("There is no such category!");
+    }
     category.setName(categoryDto.getName());
     categoryRepository.save(category);
     return CategoryMapper.toDto(category);

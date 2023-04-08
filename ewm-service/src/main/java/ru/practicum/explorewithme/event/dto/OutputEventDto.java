@@ -49,4 +49,18 @@ public class OutputEventDto {
     //широта
     private float lon;
   }
+
+  @Data
+  @AllArgsConstructor
+  public static class User {
+    private long id;
+    private String name;
+  }
+
+  @Data
+  @AllArgsConstructor
+  public static class Category {
+    private long id;
+    private String name;
+  }
 }
