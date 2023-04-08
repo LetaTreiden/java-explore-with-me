@@ -3,9 +3,7 @@ package ru.practicum.explorewithme.event.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Query;
 import ru.practicum.explorewithme.event.model.Event;
-import ru.practicum.explorewithme.request.model.Request;
 
 public interface EventRepositoryCustom {
 

@@ -112,7 +112,7 @@ public class EventController {
 
     private List<HitDto> viewsStats(int id, HitDto hit) {
         String[] uris = new String[1];
-        uris[0] = "/events/" +id;
+        uris[0] = "/events/" + id;
         ResponseEntity<Object> hits = statsClient.getHits(min.format(formatter), max.format(formatter), uris,
                 false);
         List<HitDto> hitList = new ObjectMapper().convertValue(hits.getBody(), new TypeReference<>() {
