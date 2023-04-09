@@ -37,7 +37,7 @@ public class EventController {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Value("${app.name}")
-    private String APP_NAME;
+    private String APPNAME;
 
 
 
@@ -98,7 +98,7 @@ public class EventController {
                                             @RequestParam(defaultValue = "10") int size,
                                             HttpServletRequest request) {
         log.info("hit start");
-        statsClient.hit(new HitDto(APP_NAME, request.getRequestURI(), request.getRemoteAddr(),
+        statsClient.hit(new HitDto(APPNAME, request.getRequestURI(), request.getRemoteAddr(),
                 LocalDateTime.now(), 0L));
         log.info("hit end");
         return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
@@ -106,7 +106,7 @@ public class EventController {
 
     @GetMapping("/events/{eventId}")
     public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
-        HitDto hitDto = new HitDto(APP_NAME, request.getRequestURI(), request.getRemoteAddr(),
+        HitDto hitDto = new HitDto(APPNAME, request.getRequestURI(), request.getRemoteAddr(),
                 LocalDateTime.now(), 0L);
         statsClient.hit(hitDto);
         int requests = 0;
