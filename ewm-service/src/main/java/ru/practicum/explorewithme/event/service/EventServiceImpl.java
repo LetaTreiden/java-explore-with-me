@@ -188,36 +188,10 @@ public class EventServiceImpl implements EventService {
     public List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
                                        LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
         log.info("start to search");
-        /*return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)
+        return eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size)
                 .stream()
                 .map(EventMapper::toFullDto)
                 .collect(Collectors.toList());
-
-         */
-        List<Event> events = eventRepository
-                .searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
-        if (events.isEmpty()) {
-            return List.of();
-        }
-        log.info("events {}", events);
-        Map<Long, Long> hits = service.get(events);
-        log.info("hits {}", hits.toString());
-        List<Long> eventIds = new ArrayList<>();
-        for (Event event: events) {
-            eventIds.add(event.getId());
-        }
-        log.info("event's ids {}", eventIds);
-        Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
-        log.info("conf req {}", confRequests.toString());
-        List<EventInfo> result = new ArrayList<>();
-        for (Event event: events) {
-            EventInfo info = EventMapper.toFullDto(event);
-            info.setConfirmedRequests(confRequests.get(info.getId()));
-            info.setViews(hits.get(event.getId()));
-            result.add(info);
-        }
-        log.info("result {}", result);
-        return result;
     }
 
     @Override
