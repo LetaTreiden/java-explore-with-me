@@ -2,7 +2,6 @@ package ru.practicum.explorewithme.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import ru.practicum.explorewithme.event.model.State;
 
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;

@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateEventAdminDto extends UpdateEventDto{
+public class UpdateEventAdminDto extends UpdateEventDto {
     private StateAction stateAction;
-
     public enum StateAction {
         PUBLISH_EVENT,
         REJECT_EVENT
