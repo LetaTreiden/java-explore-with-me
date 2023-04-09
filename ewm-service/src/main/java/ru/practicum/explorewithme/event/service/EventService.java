@@ -1,6 +1,5 @@
 package ru.practicum.explorewithme.event.service;
 
-import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.event.dto.*;
 
 import java.time.LocalDateTime;
