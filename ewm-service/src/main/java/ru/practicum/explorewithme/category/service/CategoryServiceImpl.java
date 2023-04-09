@@ -36,13 +36,8 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional
   public CategoryDto update(long categoryId, CategoryDto categoryDto) {
-    Category category;
-    if (categoryRepository.existsById(categoryId)) {
-      category = categoryRepository.getReferenceById(categoryId);
-    } else {
-      log.info("There is no such category! Try with other id");
-      throw new NoSuchElementException("There is no such category!");
-    }
+    Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> new NoSuchElementException("There is no such category!"));
     category.setName(categoryDto.getName());
     return CategoryMapper.toDto(category);
   }

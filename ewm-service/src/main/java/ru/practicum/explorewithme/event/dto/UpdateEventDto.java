@@ -6,6 +6,7 @@ import ru.practicum.explorewithme.event.model.State;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -13,22 +14,23 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UpdateEventDto {
-    @NotNull
     private Long id;
     private String annotation;
     private Integer category;
     private String description;
-    private User initiator;
+    //private User initiator;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime eventDate;
 
     private Location location;
     private Boolean paid;
-    private Integer participantLimit;
-    private Boolean requestModeration;
 
-    @NotBlank
+    @PositiveOrZero
+    private Integer participantLimit;
+
+    private Boolean requestModeration;
+    
     private String title;
     private State state;
     private State stateAction;

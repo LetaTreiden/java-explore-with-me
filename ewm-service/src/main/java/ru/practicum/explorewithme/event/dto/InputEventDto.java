@@ -45,8 +45,6 @@ public class InputEventDto {
   @Size(min = 1, max = 120)
   private String title;
 
-  private State state;
-
   public Boolean getPaid() {
     return paid;
   }
