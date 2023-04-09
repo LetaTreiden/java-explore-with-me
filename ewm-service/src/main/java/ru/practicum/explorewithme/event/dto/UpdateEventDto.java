@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import ru.practicum.explorewithme.event.model.State;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 
@@ -18,7 +16,6 @@ public class UpdateEventDto {
     private String annotation;
     private Integer category;
     private String description;
-    //private User initiator;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime eventDate;
@@ -30,7 +27,7 @@ public class UpdateEventDto {
     private Integer participantLimit;
 
     private Boolean requestModeration;
-    
+
     private String title;
     private State state;
     private State stateAction;

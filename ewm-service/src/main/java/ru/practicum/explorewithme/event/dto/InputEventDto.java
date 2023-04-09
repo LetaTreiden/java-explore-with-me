@@ -8,7 +8,6 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import lombok.*;
-import ru.practicum.explorewithme.event.model.State;
 
 @NoArgsConstructor
 @AllArgsConstructor
