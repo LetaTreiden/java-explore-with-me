@@ -56,16 +56,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAllByIdIn(List<Long> ids, Integer from, Integer size) {
-
-        Pageable pageable = PageRequest.of(from, size);
-
-        return uRepo.findAllByIdIn(ids, pageable).stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     @Transactional
     public void delete(long userId) throws NoSuchElementException {
         Optional<User> user = uRepo.findById(userId);

@@ -106,6 +106,7 @@ public class EventController {
 
     @GetMapping("/events/{eventId}")
     public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
+        //оставила работу с клиентом здесь, надеюсь правильно))))
         HitDto hitDto = new HitDto(appName, request.getRequestURI(), request.getRemoteAddr(),
                 LocalDateTime.now(), 0L);
         statsClient.hit(hitDto);

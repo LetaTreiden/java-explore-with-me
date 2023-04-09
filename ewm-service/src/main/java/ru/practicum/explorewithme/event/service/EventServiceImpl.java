@@ -38,8 +38,6 @@ public class EventServiceImpl implements EventService {
 
     private final CategoryRepository categoryRepository;
 
-    private final StatsClient statsClient;
-
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
         Sort sort = Sort.by("createdOn").descending();

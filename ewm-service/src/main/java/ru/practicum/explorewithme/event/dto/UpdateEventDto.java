@@ -13,18 +13,17 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UpdateEventDto {
-    @NotBlank
-    private String annotation;
-
     @NotNull
+    private Long id;
+    private String annotation;
     private Integer category;
-
     private String description;
+    private User initiator;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
     private LocalDateTime eventDate;
 
-    private ru.practicum.explorewithme.event.dto.InputEventDto.Location location;
+    private Location location;
     private Boolean paid;
     private Integer participantLimit;
     private Boolean requestModeration;
@@ -37,10 +36,17 @@ public class UpdateEventDto {
     @Data
     @Getter
     @AllArgsConstructor
-    public class Location {
+    public static class Location {
       //долгота
       private float lat;
       //широта
       private float lon;
+    }
+
+    @Data
+    @AllArgsConstructor
+    public static class User {
+        private long id;
+        private String name;
     }
   }
