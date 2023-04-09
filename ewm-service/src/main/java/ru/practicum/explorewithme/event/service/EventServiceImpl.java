@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.event.EventMapper;
