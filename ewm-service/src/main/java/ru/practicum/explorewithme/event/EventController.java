@@ -37,7 +37,7 @@ public class EventController {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Value("${app.name}")
-    private final String appName;
+    private String appName;
 
 
 
