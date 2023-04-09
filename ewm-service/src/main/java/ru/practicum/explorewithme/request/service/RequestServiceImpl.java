@@ -2,7 +2,10 @@ package ru.practicum.explorewithme.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.repository.EventRepository;
@@ -42,11 +45,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto create(long userId, long eventId) {
-        log.info("creating request");
-        if (requestRepository.existsByEventIdAndUserId(eventId, userId)) {
-            throw new ValidationException("Request already exists");
-        }
-        log.info("there is no such request yet");
+
         Event event;
         if (eventRepository.existsById(eventId)) {
             event = eventRepository.getReferenceById(eventId);
@@ -55,6 +54,21 @@ public class RequestServiceImpl implements RequestService {
             throw new NoSuchElementException("There is no such user");
         }
         log.info("user {} exist", userId);
+
+        log.info("conf " + requestRepository.getRequestsEventConfirmed((int) eventId).size());
+        log.info("limit " + event.getParticipantLimit());
+        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
+            log.info("Too much participants");
+            throw new ValidationException("Too much participants");
+        }
+
+        log.info("creating request");
+        if (requestRepository.existsByEventIdAndUserId(eventId, userId)) {
+            throw new ValidationException("Request already exists");
+        }
+        log.info("there is no such request yet");
+
+
         if (event.getState() != EventStatus.PUBLISHED) {
             throw new ValidationException("You cannot add a request to event with status " + event.getState());
         }
@@ -65,12 +79,7 @@ public class RequestServiceImpl implements RequestService {
         }
         log.info("you wasn't invited yet");
 
-        if (event.getParticipantLimit() != null) {
-            if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
-                log.info("Too much participants");
-                throw new ValidationException("Too much participants");
-            }
-        }
+
         log.info("there is enough places for participants");
 
         RequestStatus requestState;
@@ -125,6 +134,8 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public RequestStatusesDto update(long userId, long eventId,
                                      UpdateRequestDto updateRequestDto) {
+        RequestStatusesDto updatedRequests = new RequestStatusesDto();
+        log.info(updateRequestDto.toString());
         List<Request> requests = requestRepository.findAllByIdIn(updateRequestDto.getRequestIds());
         requests.forEach(s -> {
             if (s.getStatus() != RequestStatus.PENDING) {
@@ -134,6 +145,8 @@ public class RequestServiceImpl implements RequestService {
 
             Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
+            log.info("conf " + requestRepository.getRequestsEventConfirmed((int) eventId).size());
+            log.info("limit " + event.getParticipantLimit());
             if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
                 log.info("Too much participants");
                 throw new ValidationException("Too much participants");
@@ -143,7 +156,6 @@ public class RequestServiceImpl implements RequestService {
             eventRepository.save(event);
         });
 
-        RequestStatusesDto updatedRequests = new RequestStatusesDto();
         if (updateRequestDto.getStatus() == RequestStatus.CONFIRMED) {
             updatedRequests.setConfirmedRequests(requests.stream().map(RequestMapper::toDto)
                     .collect(toList()));
