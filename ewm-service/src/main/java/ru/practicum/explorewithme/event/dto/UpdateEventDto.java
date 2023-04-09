@@ -36,7 +36,6 @@ public class UpdateEventDto {
 
     @Size(min = 1, max = 120)
     private String title;
-    
     private State state;
     private State stateAction;
 
@@ -44,10 +43,10 @@ public class UpdateEventDto {
     @Getter
     @AllArgsConstructor
     public static class Location {
-      //долгота
-      private float lat;
-      //широта
-      private float lon;
+        //долгота
+        private float lat;
+        //широта
+        private float lon;
     }
 
     @Data
@@ -56,4 +55,4 @@ public class UpdateEventDto {
         private long id;
         private String name;
     }
-  }
+}
