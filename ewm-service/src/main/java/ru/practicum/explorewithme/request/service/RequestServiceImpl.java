@@ -42,19 +42,11 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto create(long userId, long eventId) {
-
-        Event event;
-        if (eventRepository.existsById(eventId)) {
-            event = eventRepository.getReferenceById(eventId);
-        } else {
-            log.info("This user id{} doesn't exists", userId);
-            throw new NoSuchElementException("There is no such user");
-        }
+        Event event = eventRepository.findById(eventId).orElseThrow(
+                () -> new NoSuchElementException("There is no such user"));
         log.info("user {} exist", userId);
-
-        log.info("conf " + requestRepository.getRequestsEventConfirmed((int) eventId).size());
-        log.info("limit " + event.getParticipantLimit());
-        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
+        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()
+                && event.getParticipantLimit() != 0) {
             log.info("Too much participants");
             throw new ValidationException("Too much participants");
         }
@@ -129,6 +121,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional
     public RequestStatusesDto update(long userId, long eventId,
                                      UpdateRequestDto updateRequestDto) {
         RequestStatusesDto updatedRequests = new RequestStatusesDto();
@@ -136,7 +129,8 @@ public class RequestServiceImpl implements RequestService {
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
-        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
+        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()
+        && event.getParticipantLimit() != 0) {
             log.info("Too much participants");
             throw new ValidationException("Too much participants");
         }
@@ -146,9 +140,6 @@ public class RequestServiceImpl implements RequestService {
                 throw new ValidationException("You cannot change request with status " + s.getStatus());
             }
             s.setStatus(updateRequestDto.getStatus());
-
-            requestRepository.save(s);
-            eventRepository.save(event);
         });
 
         if (updateRequestDto.getStatus() == RequestStatus.CONFIRMED) {
