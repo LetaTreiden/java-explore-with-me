@@ -47,4 +47,22 @@ public class HitService {
         return hits;
     }
 
+    public Map<Long, Long> getTwo(List<Event> events) {
+        List<String> uris = new ArrayList<>();
+        for (Event event: events) {
+            uris.add(URI + event.getId().toString());
+        }
+        log.info("uris {}", uris);
+        List<HitStatDto> stats = client.get(LocalDateTime.now().format(DATE_TIME_FORMATTER),
+                LocalDateTime.now().format(DATE_TIME_FORMATTER), uris, true);
+        log.info("stats {}", stats);
+        Map<Long, Long> hits = new HashMap<>();
+        for (HitStatDto viewStatsDto: stats) {
+            Long id = Long.parseLong(viewStatsDto.getUri().split("/")[1]);
+            log.info(id.toString());
+            hits.put(id, viewStatsDto.getHits());
+        }
+        return hits;
+    }
+
 }
