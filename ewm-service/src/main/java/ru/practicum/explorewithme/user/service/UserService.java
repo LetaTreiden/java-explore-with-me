@@ -11,5 +11,5 @@ public interface UserService {
 
     List<UserDto> getAllTwo(List<Long> id, int from, int size);
 
-    void delete(long userId) throws NoSuchFieldException;
+    void delete(long userId);
 }
