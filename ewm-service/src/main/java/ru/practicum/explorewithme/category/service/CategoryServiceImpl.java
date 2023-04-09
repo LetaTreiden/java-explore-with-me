@@ -44,7 +44,6 @@ public class CategoryServiceImpl implements CategoryService {
       throw new NoSuchElementException("There is no such category!");
     }
     category.setName(categoryDto.getName());
-    categoryRepository.save(category);
     return CategoryMapper.toDto(category);
   }
 
