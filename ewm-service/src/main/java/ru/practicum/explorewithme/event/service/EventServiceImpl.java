@@ -19,18 +19,23 @@ import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.State;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
+import ru.practicum.explorewithme.hit.HitService;
+import ru.practicum.explorewithme.request.model.RequestStatus;
+import ru.practicum.explorewithme.request.repository.RequestRepository;
+import ru.practicum.explorewithme.service.StatsService;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class EventServiceImpl implements EventService {
@@ -39,11 +44,16 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     private final CategoryRepository categoryRepository;
+    private final RequestRepository requestRepository;
     private final LocalDateTime max = LocalDateTime.of(3023, 9, 19, 14, 5);
 
     private final LocalDateTime min = LocalDateTime.of(1023, 9, 19, 14, 5);
 
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private final StatsClient statsClient;
+
+    private final HitService service;
 
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
@@ -80,6 +90,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional
     public OutputEventDto update(long userId, long eventId, UpdateEventUserDto dto) {
         log.info("update event user");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
@@ -110,9 +121,28 @@ public class EventServiceImpl implements EventService {
     public List<EventInfo> search(List<Long> users, List<String> states, List<Integer> categories,
                                   LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
         log.info("search");
-        return eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size).stream()
-                .map(EventMapper::toFullDto)
-                .collect(Collectors.toList());
+        List<Event> events = eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size);
+        if (events.isEmpty()) {
+            return List.of();
+        }
+        log.info("events {}", events);
+        Map<Long, Long> hits = service.get(events);
+        log.info("hits {}", hits.toString());
+        List<Long> eventIds = new ArrayList<>();
+        for (Event event: events) {
+            eventIds.add(event.getId());
+        }
+        log.info("event's ids {}", eventIds);
+        Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
+        log.info("conf req {}", confRequests.toString());
+        List<EventInfo> result = new ArrayList<>();
+        for (Event event: events) {
+            EventInfo info = EventMapper.toFullDto(event);
+            info.setConfirmedRequests(confRequests.get(info.getId()));
+            info.setViews(hits.get(event.getId()));
+        }
+        log.info("result {}", result);
+        return result;
     }
 
     @Override
@@ -166,12 +196,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventInfo getFullInfoById(long eventId, StatsClient statsClient) {
+    public EventInfo getFullInfoById(long eventId) {
         log.info("get full information");
         EventInfo info = EventMapper.toFullDto(eventRepository.findById(eventId).orElseThrow(()
                 -> new NoSuchElementException()));
         int requests = 0;
-        List<HitDto> viewsStats = viewsStats((int) eventId, statsClient);
+        List<HitDto> viewsStats = viewsStats((int) eventId);
         for (int i = 0, viewsStatsSize = viewsStats.size(); i < viewsStatsSize; i++) {
             requests++;
         }
@@ -179,7 +209,7 @@ public class EventServiceImpl implements EventService {
         return info;
     }
 
-    private List<HitDto> viewsStats(int id, StatsClient statsClient) {
+    private List<HitDto> viewsStats(int id) {
         String[] uris = new String[1];
         uris[0] = "/events/" + id;
         ResponseEntity<Object> hits = statsClient.getHits(min.format(formatter), max.format(formatter), uris,

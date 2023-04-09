@@ -87,6 +87,6 @@ public class EventController {
     @GetMapping("/events/{eventId}")
     public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
         statsClient.hit(request);
-        return eventService.getFullInfoById(eventId, statsClient);
+        return eventService.getFullInfoById(eventId);
     }
 }

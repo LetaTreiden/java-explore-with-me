@@ -24,5 +24,5 @@ public interface EventService {
     List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
                                 LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size);
 
-    EventInfo getFullInfoById(long eventId, StatsClient statsClient);
+    EventInfo getFullInfoById(long eventId);
 }
