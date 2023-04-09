@@ -1,10 +1,15 @@
 package ru.practicum.explorewithme.event.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewithme.HitDto;
+import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.event.EventMapper;
@@ -22,6 +27,7 @@ import ru.practicum.explorewithme.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -36,9 +42,15 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     private final CategoryRepository categoryRepository;
+    private final LocalDateTime max = LocalDateTime.of(3023, 9, 19, 14, 5);
+
+    private final LocalDateTime min = LocalDateTime.of(1023, 9, 19, 14, 5);
+
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
+        log.info("get all");
         Sort sort = Sort.by("createdOn").descending();
         PageRequest pageable = PageRequest.of(from / size, size, sort);
         return eventRepository.findAllByInitiatorId(userId, pageable).stream()
@@ -49,12 +61,12 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public OutputEventDto create(long userId, InputEventDto inputEventDto) {
+        log.info("create");
         if (inputEventDto.getEventDate().isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Неверная дата");
+            throw new ValidationException("Wrong date");
         }
         User user = checkUserExistence(userId);
         Category category = checkCategoryExistence(Long.valueOf(inputEventDto.getCategory()));
-        log.info(inputEventDto.toString());
         Event event = (EventMapper.toEvent(inputEventDto));
         event.setInitiator(user);
         event.setCategory(category);
@@ -65,14 +77,15 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public OutputEventDto getById(long userId, long eventId) {
+        log.info("get by id");
         Event event = checkEventExistence(eventId);
         return EventMapper.toDto(event);
     }
 
     @Override
     public OutputEventDto update(long userId, long eventId, UpdateEventDto dto) {
+        log.info("update");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-        log.info("event " + event.getState());
         if (dto.getState() == null) {
             dto.setState(dto.getStateAction());
         }
@@ -99,6 +112,7 @@ public class EventServiceImpl implements EventService {
     @Override
     public List<EventInfo> search(List<Long> users, List<String> states, List<Integer> categories,
                                   LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
+        log.info("search");
         return eventRepository.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size).stream()
                 .map(EventMapper::toFullDto)
                 .collect(Collectors.toList());
@@ -111,9 +125,7 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
         Event updEvent = EventMapper.toEvent(eventDto, event);
 
-        log.info("ev " + event.getState().toString());
         if (eventDto.getState() == null) {
-            log.info("st act " + eventDto.getStateAction());
             eventDto.setState(eventDto.getStateAction());
         }
 
@@ -139,13 +151,12 @@ public class EventServiceImpl implements EventService {
             newState = EventStatus.PENDING;
         }
 
-        log.info("new state " + newState);
         updEvent.setState(newState);
         if (newState == EventStatus.PUBLISHED) updEvent.setPublishedOn(LocalDateTime.now());
         else updEvent.setPublishedOn(null);
 
         eventRepository.save(updEvent);
-        log.info(updEvent.getState().toString());
+        log.info("state {}", updEvent.getState().toString());
         return EventMapper.toDto(updEvent);
     }
 
@@ -160,13 +171,28 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventInfo getFullInfoById(long eventId, int requests) {
+    public EventInfo getFullInfoById(long eventId, StatsClient statsClient) {
+        log.info("get full information");
         EventInfo info = EventMapper.toFullDto(eventRepository.findById(eventId).orElseThrow(()
                 -> new NoSuchElementException()));
+        int requests = 0;
+        List<HitDto> viewsStats = viewsStats((int) eventId, statsClient);
+        for (int i = 0, viewsStatsSize = viewsStats.size(); i < viewsStatsSize; i++) {
+            requests++;
+        }
         info.setConfirmedRequests(requests);
         return info;
     }
 
+    private List<HitDto> viewsStats(int id, StatsClient statsClient) {
+        String[] uris = new String[1];
+        uris[0] = "/events/" + id;
+        ResponseEntity<Object> hits = statsClient.getHits(min.format(formatter), max.format(formatter), uris,
+                true);
+        List<HitDto> hitList = new ObjectMapper().convertValue(hits.getBody(), new TypeReference<>() {
+        });
+        return hitList;
+    }
 
 
     private User checkUserExistence(Long id) {

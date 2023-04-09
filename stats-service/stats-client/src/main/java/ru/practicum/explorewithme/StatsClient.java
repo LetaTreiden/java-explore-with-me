@@ -9,12 +9,17 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
 @Service
 @Slf4j
 public class StatsClient extends BaseClient {
+
+    @Value("${app.name}")
+    private String appName;
 
     @Autowired
     public StatsClient(@Value("${stat-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -26,9 +31,10 @@ public class StatsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> hit(HitDto hitDto) {
+    public ResponseEntity<Object> hit(HttpServletRequest request) {
         log.info("fine");
-
+        HitDto hitDto = new HitDto(appName, request.getRequestURI(),
+                request.getRemoteAddr(), LocalDateTime.now(), 0L);
         return post("/hit", hitDto);
     }
 

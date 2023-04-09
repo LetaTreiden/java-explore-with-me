@@ -1,15 +1,10 @@
 package ru.practicum.explorewithme.event;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.HitDto;
 import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.event.dto.EventInfo;
 import ru.practicum.explorewithme.event.dto.InputEventDto;
@@ -20,7 +15,6 @@ import ru.practicum.explorewithme.event.service.EventService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -30,16 +24,6 @@ public class EventController {
 
     private final EventService eventService;
     private final StatsClient statsClient;
-    private final LocalDateTime max = LocalDateTime.of(3023, 9, 19, 14, 5);
-
-    private final LocalDateTime min = LocalDateTime.of(1023, 9, 19, 14, 5);
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-    @Value("${app.name}")
-    private String appName;
-
-
 
     @GetMapping("/users/{userId}/events")
     public List<OutputEventDto> getAll(@PathVariable long userId,
@@ -98,32 +82,14 @@ public class EventController {
                                             @RequestParam(defaultValue = "10") int size,
                                             HttpServletRequest request) {
         log.info("hit start");
-        statsClient.hit(new HitDto(appName, request.getRequestURI(), request.getRemoteAddr(),
-                LocalDateTime.now(), 0L));
+        statsClient.hit(request);
         log.info("hit end");
         return eventService.getFullInfo(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
     }
 
     @GetMapping("/events/{eventId}")
     public EventInfo getFullEventInfo(@PathVariable long eventId, HttpServletRequest request) {
-        //оставила работу с клиентом здесь, надеюсь правильно))))
-        HitDto hitDto = new HitDto(appName, request.getRequestURI(), request.getRemoteAddr(),
-                LocalDateTime.now(), 0L);
-        statsClient.hit(hitDto);
-        int requests = 0;
-        for (HitDto dto : viewsStats((int) eventId, hitDto)) {
-            requests++;
-        }
-        return eventService.getFullInfoById(eventId, requests);
-    }
-
-    private List<HitDto> viewsStats(int id, HitDto hit) {
-        String[] uris = new String[1];
-        uris[0] = "/events/" + id;
-        ResponseEntity<Object> hits = statsClient.getHits(min.format(formatter), max.format(formatter), uris,
-                false);
-        List<HitDto> hitList = new ObjectMapper().convertValue(hits.getBody(), new TypeReference<>() {
-        });
-        return hitList;
+        statsClient.hit(request);
+        return eventService.getFullInfoById(eventId, statsClient);
     }
 }
