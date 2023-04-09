@@ -5,6 +5,7 @@ import lombok.*;
 import ru.practicum.explorewithme.event.model.State;
 
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -13,8 +14,13 @@ import java.time.LocalDateTime;
 @Setter
 public class UpdateEventDto {
     private Long id;
+
+    @Size(min = 1, max = 2000)
     private String annotation;
+
     private Integer category;
+
+    @Size(min = 1, max = 7000)
     private String description;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", shape = JsonFormat.Shape.STRING)
@@ -28,7 +34,9 @@ public class UpdateEventDto {
 
     private Boolean requestModeration;
 
+    @Size(min = 1, max = 120)
     private String title;
+    
     private State state;
     private State stateAction;
 

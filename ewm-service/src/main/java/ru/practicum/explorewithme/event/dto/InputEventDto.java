@@ -33,6 +33,7 @@ public class InputEventDto {
 
   @NotNull
   private Location location;
+
   private boolean paid;
 
   @PositiveOrZero
@@ -43,14 +44,6 @@ public class InputEventDto {
   @NotBlank
   @Size(min = 1, max = 120)
   private String title;
-
-  public Boolean getPaid() {
-    return paid;
-  }
-
-  public Boolean getRequestModeration() {
-    return requestModeration;
-  }
 
   @Data
   @Getter
