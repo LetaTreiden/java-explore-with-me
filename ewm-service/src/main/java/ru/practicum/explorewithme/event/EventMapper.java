@@ -47,18 +47,13 @@ public class EventMapper {
         .build();
   }
 
-  public static Event toEvent(UpdateEventDto eventDto, Event event) {
+  public static Event toEvent(UpdateEventUserDto eventDto, Event event) {
     log.info("right mapper");
     EventStatus newState = null;
-    if (eventDto.getState() != null) {
-      switch (eventDto.getState()) {
+    if (eventDto.getStateAction() != null) {
+      switch (eventDto.getStateAction()) {
         case CANCEL_REVIEW:
-        case DECLINE_EVENT:
-        case REJECT_EVENT:
           newState = EventStatus.CANCELED;
-          break;
-        case PUBLISH_EVENT:
-          newState = EventStatus.PUBLISHED;
           break;
         case SEND_TO_REVIEW:
           newState = EventStatus.PENDING;
@@ -91,6 +86,48 @@ public class EventMapper {
             .category(event.getCategory())
             .build();
   }
+
+  public static Event toEvent(UpdateEventAdminDto eventDto, Event event) {
+    log.info("right mapper");
+    EventStatus newState = null;
+    if (eventDto.getStateAction() != null) {
+      switch (eventDto.getStateAction()) {
+                case REJECT_EVENT:
+          newState = EventStatus.CANCELED;
+          break;
+        case PUBLISH_EVENT:
+          newState = EventStatus.PUBLISHED;
+          break;
+
+      }
+    }
+    return Event.builder()
+            .id(event.getId())
+            .annotation(eventDto.getAnnotation() != null && !eventDto.getAnnotation().isBlank()
+                    ? eventDto.getAnnotation() : event.getAnnotation())
+            .description(eventDto.getDescription() != null && !eventDto.getDescription().isBlank()
+                    ? eventDto.getDescription()
+                    : event.getDescription())
+            .eventDate(eventDto.getEventDate() != null ? eventDto.getEventDate() : event.getEventDate())
+            .paid(eventDto.getPaid() != null ? eventDto.getPaid() : event.getPaid())
+            .participantLimit(eventDto.getParticipantLimit() != null
+                    ? eventDto.getParticipantLimit()
+                    : event.getParticipantLimit())
+            .requestModeration(eventDto.getRequestModeration() != null
+                    ? eventDto.getRequestModeration()
+                    : event.getRequestModeration())
+            .title(eventDto.getTitle() != null && !eventDto.getTitle().isBlank()
+                    ? eventDto.getTitle() : event.getTitle())
+            .location(eventDto.getLocation() != null ?
+                    new Location(eventDto.getLocation().getLat(), eventDto.getLocation().getLon())
+                    : event.getLocation())
+            .createdOn(event.getCreatedOn())
+            .state(newState != null ? newState : event.getState())
+            .initiator(event.getInitiator())
+            .category(event.getCategory())
+            .build();
+  }
+
 
   public static EventInfo toFullDto(Event event) {
     return EventInfo.builder()

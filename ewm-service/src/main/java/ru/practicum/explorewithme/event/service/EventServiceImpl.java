@@ -13,10 +13,7 @@ import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
 import ru.practicum.explorewithme.event.EventMapper;
-import ru.practicum.explorewithme.event.dto.EventInfo;
-import ru.practicum.explorewithme.event.dto.InputEventDto;
-import ru.practicum.explorewithme.event.dto.OutputEventDto;
-import ru.practicum.explorewithme.event.dto.UpdateEventDto;
+import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.State;
@@ -83,11 +80,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public OutputEventDto update(long userId, long eventId, UpdateEventDto dto) {
-        log.info("update");
+    public OutputEventDto update(long userId, long eventId, UpdateEventUserDto dto) {
+        log.info("update event user");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-        if (dto.getState() == null) {
-            dto.setState(dto.getStateAction());
+        if (dto.getStateAction() == null) {
+            dto.setStateAction(dto.getStateAction());
         }
 
         if (event.getInitiator().getId() != userId) {
@@ -120,19 +117,17 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional
-    public OutputEventDto update(long eventId, UpdateEventDto eventDto) {
-        log.info("update event");
+    public OutputEventDto update(long eventId, UpdateEventAdminDto eventDto) {
+        log.info("update event admin");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
         Event updEvent = EventMapper.toEvent(eventDto, event);
 
-        if (eventDto.getState() == null) {
-            eventDto.setState(eventDto.getStateAction());
-        }
-
-        if ((eventDto.getState() == State.PUBLISH_EVENT
-                || eventDto.getState() == State.REJECT_EVENT)
-                && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
-            throw new ValidationException("Cannot update event with status " + event.getState());
+        if (eventDto.getStateAction() != null) {
+            if ((eventDto.getStateAction().toString().equals(State.PUBLISH_EVENT.toString())
+                    || eventDto.getStateAction().toString().equals(State.REJECT_EVENT.toString()))
+                    && (event.getState() == EventStatus.PUBLISHED || event.getState() == EventStatus.CANCELED)) {
+                throw new ValidationException("Cannot update event with status " + event.getState());
+            }
         }
 
         if (eventDto.getEventDate() != null
@@ -141,10 +136,10 @@ public class EventServiceImpl implements EventService {
         }
 
         EventStatus newState;
-        if (eventDto.getState() == State.PUBLISH_EVENT) {
+        if (eventDto.getStateAction().toString().equals(State.PUBLISH_EVENT.toString())) {
             newState = EventStatus.PUBLISHED;
-        } else if (eventDto.getState() == State.CANCEL_REVIEW
-                || eventDto.getState() == State.REJECT_EVENT
+        } else if (eventDto.getStateAction().toString().equals(State.CANCEL_REVIEW.toString())
+                || eventDto.getStateAction().toString().equals(State.REJECT_EVENT.toString())
         ) {
             newState = EventStatus.CANCELED;
         } else {

@@ -13,7 +13,7 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
   boolean existsByEventIdAndUserId(long eventId, long userId);
 
-  List<Request> findAllByIdIn(List<Long> eventIds);
+  List<Request> findAllByIdIn(List<Long> list);
 
   @Query(value = "select * " +
           "from requests as r " +

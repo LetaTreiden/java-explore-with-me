@@ -6,10 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.StatsClient;
-import ru.practicum.explorewithme.event.dto.EventInfo;
-import ru.practicum.explorewithme.event.dto.InputEventDto;
-import ru.practicum.explorewithme.event.dto.OutputEventDto;
-import ru.practicum.explorewithme.event.dto.UpdateEventDto;
+import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.service.EventService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +43,7 @@ public class EventController {
     @PatchMapping("/users/{userId}/events/{eventId}")
     public OutputEventDto update(@PathVariable long userId,
                                  @PathVariable long eventId,
-                                 @Valid @RequestBody UpdateEventDto eventDto) {
+                                 @Valid @RequestBody UpdateEventUserDto eventDto) {
         return eventService.update(userId, eventId, eventDto);
     }
 
@@ -64,7 +61,7 @@ public class EventController {
     }
 
     @PatchMapping("/admin/events/{eventId}")
-    public OutputEventDto adminUpdate(@PathVariable long eventId, @RequestBody UpdateEventDto eventDto) {
+    public OutputEventDto adminUpdate(@PathVariable long eventId, @RequestBody UpdateEventAdminDto eventDto) {
         return eventService.update(eventId, eventDto);
     }
 
