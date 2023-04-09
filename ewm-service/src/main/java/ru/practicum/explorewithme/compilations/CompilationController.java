@@ -50,7 +50,7 @@ public class CompilationController {
 
   @PatchMapping("/admin/compilations/{compilationId}")
   public CompilationDto update(@PathVariable long compilationId,
-      @RequestBody CompilationDtoToUpdate compilationDto) {
+      @RequestBody @Valid CompilationDtoToUpdate compilationDto) {
     return compilationService.update(compilationId, compilationDto);
   }
 }

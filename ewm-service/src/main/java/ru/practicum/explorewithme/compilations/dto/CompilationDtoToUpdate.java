@@ -13,13 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class CompilationDtoToUpdate {
     private List<Long> events;
-    private boolean pinned;
+    private Boolean pinned;
 
-    @NotBlank
     @Size(max = 120, min = 1)
     private String title;
-
-    public Boolean getPinned() {
-        return pinned;
-    }
 }
