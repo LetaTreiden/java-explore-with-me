@@ -138,6 +138,7 @@ public class EventServiceImpl implements EventService {
             EventInfo info = EventMapper.toFullDto(event);
             info.setConfirmedRequests(confRequests.get(info.getId()));
             info.setViews(hits.get(event.getId()));
+            result.add(info);
         }
         log.info("result {}", result);
         return result;
