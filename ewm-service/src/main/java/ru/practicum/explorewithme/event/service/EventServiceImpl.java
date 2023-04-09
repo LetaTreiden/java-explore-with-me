@@ -20,9 +20,7 @@ import ru.practicum.explorewithme.event.model.State;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
 import ru.practicum.explorewithme.hit.HitService;
-import ru.practicum.explorewithme.request.model.RequestStatus;
 import ru.practicum.explorewithme.request.repository.RequestRepository;
-import ru.practicum.explorewithme.service.StatsService;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.repository.UserRepository;
 
