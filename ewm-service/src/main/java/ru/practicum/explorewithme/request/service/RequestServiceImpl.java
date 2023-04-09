@@ -132,22 +132,20 @@ public class RequestServiceImpl implements RequestService {
     public RequestStatusesDto update(long userId, long eventId,
                                      UpdateRequestDto updateRequestDto) {
         RequestStatusesDto updatedRequests = new RequestStatusesDto();
-        log.info(updateRequestDto.toString());
+        log.info(updateRequestDto.getRequestIds().toString());
+
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
+
+        if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
+            log.info("Too much participants");
+            throw new ValidationException("Too much participants");
+        }
         List<Request> requests = requestRepository.findAllByIdIn(updateRequestDto.getRequestIds());
         requests.forEach(s -> {
             if (s.getStatus() != RequestStatus.PENDING) {
                 throw new ValidationException("You cannot change request with status " + s.getStatus());
             }
             s.setStatus(updateRequestDto.getStatus());
-
-            Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
-
-            log.info("conf " + requestRepository.getRequestsEventConfirmed((int) eventId).size());
-            log.info("limit " + event.getParticipantLimit());
-            if (requestRepository.getRequestsEventConfirmed((int) eventId).size() >= event.getParticipantLimit()) {
-                log.info("Too much participants");
-                throw new ValidationException("Too much participants");
-            }
 
             requestRepository.save(s);
             eventRepository.save(event);
