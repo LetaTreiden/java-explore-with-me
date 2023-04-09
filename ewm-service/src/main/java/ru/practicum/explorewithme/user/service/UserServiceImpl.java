@@ -50,19 +50,14 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
         Pageable pageable = PageRequest.of(from, size);
         log.info(pageable.toString());
-        log.info("id size " + id.size());
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
     }
 
     @Override
     @Transactional
-    public void delete(long userId) throws NoSuchElementException {
-        Optional<User> user = uRepo.findById(userId);
-        if (user.isEmpty()) {
-            throw new NoSuchElementException("User not found");
-        }
-        User user1 = uRepo.getReferenceById(userId);
-        log.info(user1.toString());
-        uRepo.deleteById(user1.getId());
+    public void delete(long userId) {
+        User user = uRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+        log.info(user.toString());
+        uRepo.deleteById(user.getId());
     }
 }
