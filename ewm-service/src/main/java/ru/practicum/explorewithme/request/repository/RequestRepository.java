@@ -30,13 +30,4 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
           "AND r.status='CONFIRMED' ",
           nativeQuery = true)
   Map<Long, Integer> getRequestsEventsConfirmed(List<Long> eventIds);
-
-
- /* @Query(value = "select requests.event_id, count(requests) from requests as r " +
-          "where r.event_id in ?1 and " +
-          "r.status = ?2 " +
-          "group by r.event_id")
-  Map<Long, Integer> findConfirmedRequestsForEvents(List<Long> eventIds, RequestStatus state);
-
-  */
 }

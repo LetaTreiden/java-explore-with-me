@@ -23,6 +23,7 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional
   public CategoryDto create(CategoryDto categoryDto) {
+    log.info("create new category");
     Category category = categoryRepository.save(CategoryMapper.toCategory(categoryDto));
     return CategoryMapper.toDto(category);
   }
@@ -30,12 +31,14 @@ public class CategoryServiceImpl implements CategoryService {
   @Override
   @Transactional
   public void delete(long categoryId) {
+    log.info("delete category");
     categoryRepository.deleteById(categoryId);
   }
 
   @Override
   @Transactional
   public CategoryDto update(long categoryId, CategoryDto categoryDto) {
+    log.info("update category");
     Category category = categoryRepository.findById(categoryId)
             .orElseThrow(() -> new NoSuchElementException("There is no such category!"));
     category.setName(categoryDto.getName());
@@ -44,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public List<CategoryDto> getAll(int from, int size) {
+    log.info("get all categories");
     Sort sort = Sort.by("id").ascending();
     PageRequest pageable = PageRequest.of(from / size, size, sort);
 
@@ -52,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Override
   public CategoryDto getById(long categoryId) {
+    log.info("get category");
     Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new NoSuchElementException());
     return CategoryMapper.toDto(category);
   }

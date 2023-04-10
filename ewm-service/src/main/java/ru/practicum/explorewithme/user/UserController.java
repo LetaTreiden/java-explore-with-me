@@ -30,7 +30,7 @@ public class UserController {
                                 @RequestParam(defaultValue = "0") int from,
                                 @RequestParam(defaultValue = "10") int size) {
         log.info("get all by ids");
-        return userService.getAllTwo(ids, from, size);
+        return userService.getAll(ids, from, size);
     }
 
     @DeleteMapping("/{userId}")

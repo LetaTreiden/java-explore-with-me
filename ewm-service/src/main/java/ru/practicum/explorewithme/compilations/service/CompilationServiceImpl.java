@@ -18,7 +18,6 @@ import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class CompilationServiceImpl implements CompilationService {
 
@@ -57,11 +56,13 @@ public class CompilationServiceImpl implements CompilationService {
   }
 
   @Override
+  @Transactional
   public void delete(long compilationId) {
     cRepo.deleteById(compilationId);
   }
 
   @Override
+  @Transactional
   public CompilationDto update(long compilationId, CompilationDtoToUpdate dto) {
     Compilation prevComp = cRepo.findById(compilationId).orElseThrow(() -> new NoSuchElementException());
     Compilation compilation = CompilationMapper.toUpdatedComp(dto, prevComp);

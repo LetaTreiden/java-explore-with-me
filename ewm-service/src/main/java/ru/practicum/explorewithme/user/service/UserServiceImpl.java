@@ -30,23 +30,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto create(UserDto userDto) {
+        log.info("create");
         User user = uRepo.save(UserMapper.toUser(userDto));
         return UserMapper.toUserDto(user);
     }
 
     @Override
     public List<UserDto> getAll(List<Long> id, int from, int size) {
-        Pageable pageable = PageRequest.of(from, size);
-        List<User> users = uRepo.findAllByIdIn(id, pageable);
-        List<UserDto> userDtos = new ArrayList<>();
-        for (User u : users) {
-            userDtos.add(UserMapper.toUserDto(u));
-        }
-        return userDtos;
-    }
-
-    @Override
-    public List<UserDto> getAllTwo(List<Long> id, int from, int size) {
+        log.info("get all");
         Pageable pageable = PageRequest.of(from, size);
         log.info(pageable.toString());
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
@@ -55,6 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void delete(long userId) {
+        log.info("delete");
         User user = uRepo.findById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         log.info(user.toString());
         uRepo.deleteById(user.getId());

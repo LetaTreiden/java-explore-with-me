@@ -42,6 +42,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto create(long userId, long eventId) {
+        log.info("create");
         Event event = eventRepository.findById(eventId).orElseThrow(
                 () -> new NoSuchElementException("There is no such user"));
         log.info("user {} exist", userId);
@@ -51,26 +52,17 @@ public class RequestServiceImpl implements RequestService {
             throw new ValidationException("Too much participants");
         }
 
-        log.info("creating request");
         if (requestRepository.existsByEventIdAndUserId(eventId, userId)) {
             throw new ValidationException("Request already exists");
         }
-        log.info("there is no such request yet");
-
 
         if (event.getState() != EventStatus.PUBLISHED) {
             throw new ValidationException("You cannot add a request to event with status " + event.getState());
         }
-        log.info("you can do a request");
 
         if (event.getInitiator().getId() == userId) {
             throw new ValidationException("You are already invited:)");
         }
-        log.info("you wasn't invited yet");
-
-
-        log.info("there is enough places for participants");
-
         RequestStatus requestState;
         if (Boolean.TRUE.equals(event.getRequestModeration())) requestState = RequestStatus.PENDING;
         else requestState = RequestStatus.CONFIRMED;
@@ -85,7 +77,6 @@ public class RequestServiceImpl implements RequestService {
                 .createdOn(LocalDateTime.now())
                 .status(requestState)
                 .build();
-        log.info("request created");
 
         requestRepository.save(request);
         log.info("id is {}", request.getId());
@@ -95,6 +86,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public RequestDto cancel(long userId, long requestId) {
+        log.info("cancel");
         Request request = requestRepository.findById(requestId).orElseThrow(() -> new NoSuchElementException());
 
         if (request.getUser().getId() != userId) {
@@ -109,6 +101,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<RequestDto> getAllById(long userId, long eventId) {
+        log.info("get all by id");
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new NoSuchElementException());
 
         if (event.getInitiator().getId() != userId) {
@@ -124,6 +117,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestStatusesDto update(long userId, long eventId,
                                      UpdateRequestDto updateRequestDto) {
+        log.info("update");
         RequestStatusesDto updatedRequests = new RequestStatusesDto();
         log.info(updateRequestDto.getRequestIds().toString());
 

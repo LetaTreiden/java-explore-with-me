@@ -24,7 +24,4 @@ public class CompilationDtoToCreate {
   @Size(max = 120, min = 1)
   private String title;
 
-  public Boolean getPinned() {
-    return pinned;
-  }
 }

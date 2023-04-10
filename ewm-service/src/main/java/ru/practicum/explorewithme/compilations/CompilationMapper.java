@@ -27,7 +27,7 @@ public class CompilationMapper {
   public static Compilation toCompilation(CompilationDtoToCreate compilationDto) {
     return Compilation.builder()
         .title(compilationDto.getTitle())
-        .pinned(compilationDto.getPinned())
+        .pinned(compilationDto.isPinned())
         .events(compilationDto.getEvents().stream().map(Event::new).collect(Collectors.toSet()))
         .build();
   }

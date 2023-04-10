@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.HitDto;
+import ru.practicum.explorewithme.HitStatDto;
 import ru.practicum.explorewithme.StatsClient;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.category.repository.CategoryRepository;
@@ -19,7 +20,6 @@ import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.State;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
-import ru.practicum.explorewithme.hit.HitService;
 import ru.practicum.explorewithme.request.repository.RequestRepository;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.repository.UserRepository;
@@ -27,10 +27,7 @@ import ru.practicum.explorewithme.user.repository.UserRepository;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,7 +48,11 @@ public class EventServiceImpl implements EventService {
 
     private final StatsClient statsClient;
 
-    private final HitService service;
+    static final String URI = "/events/";
+
+    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private final StatsClient client;
 
     @Override
     public List<OutputEventDto> getAll(long userId, int from, int size) {
@@ -123,16 +124,12 @@ public class EventServiceImpl implements EventService {
         if (events.isEmpty()) {
             return List.of();
         }
-        log.info("events {}", events);
-        Map<Long, Long> hits = service.get(events);
-        log.info("hits {}", hits.toString());
+        Map<Long, Long> hits = get(events);
         List<Long> eventIds = new ArrayList<>();
         for (Event event: events) {
             eventIds.add(event.getId());
         }
-        log.info("event's ids {}", eventIds);
         Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
-        log.info("conf req {}", confRequests.toString());
         List<EventInfo> result = new ArrayList<>();
         for (Event event: events) {
             EventInfo info = EventMapper.toFullDto(event);
@@ -140,7 +137,6 @@ public class EventServiceImpl implements EventService {
             info.setViews(hits.get(event.getId()));
             result.add(info);
         }
-        log.info("result {}", result);
         return result;
     }
 
@@ -193,16 +189,12 @@ public class EventServiceImpl implements EventService {
         if (events.isEmpty()) {
             return List.of();
         }
-        log.info("events {}", events);
-        Map<Long, Long> hits = service.getTwo(events);
-        log.info("hits {}", hits.toString());
+        Map<Long, Long> hits = getTwo(events);
         List<Long> eventIds = new ArrayList<>();
         for (Event event: events) {
             eventIds.add(event.getId());
         }
-        log.info("event's ids {}", eventIds);
         Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
-        log.info("conf req {}", confRequests.toString());
         List<EventInfo> result = new ArrayList<>();
         for (Event event: events) {
             EventInfo info = EventMapper.toFullDto(event);
@@ -210,7 +202,6 @@ public class EventServiceImpl implements EventService {
             info.setViews(hits.get(event.getId()));
             result.add(info);
         }
-        log.info("result {}", result);
         return result;
     }
 
@@ -225,7 +216,7 @@ public class EventServiceImpl implements EventService {
             requests++;
         }
         info.setConfirmedRequests(requests);
-        Map<Long, Long> hits = service.get(List.of(eventRepository.getReferenceById(eventId)));
+        Map<Long, Long> hits = get(List.of(eventRepository.getReferenceById(eventId)));
         log.info("hits {}", hits.toString());
         info.setViews(hits.get(eventId));
         return info;
@@ -239,6 +230,47 @@ public class EventServiceImpl implements EventService {
         List<HitDto> hitList = new ObjectMapper().convertValue(hits.getBody(), new TypeReference<>() {
         });
         return hitList;
+    }
+
+    private Map<Long, Long> get(List<Event> events) {
+        List<String> uris = new ArrayList<>();
+        for (Event event: events) {
+            uris.add(URI + event.getId().toString());
+            log.info(uris.toString());
+        }
+        Event earliestEvent = Collections.min(events, Comparator.comparing(Event::getEventDate));
+        log.info("uris {}", uris);
+        List<HitStatDto> stats = client.get(earliestEvent.getEventDate().format(DATE_TIME_FORMATTER),
+                LocalDateTime.now().format(DATE_TIME_FORMATTER), uris, true);
+        log.info("stats {}", stats);
+        Map<Long, Long> hits = new HashMap<>();
+        for (HitStatDto viewStatsDto: stats) {
+            Long id = Long.parseLong(viewStatsDto.getUri().split("/")[2]);
+            log.info(id.toString());
+            hits.put(id, viewStatsDto.getHits());
+        }
+        return hits;
+    }
+
+    private Map<Long, Long> getTwo(List<Event> events) {
+        List<String> uris = new ArrayList<>();
+        for (Event event: events) {
+            uris.add(URI + event.getId().toString());
+            log.info(uris.toString());
+        }
+        Event earliestEvent = Collections.min(events, Comparator.comparing(Event::getEventDate));
+        log.info("uris {}", uris);
+        List<HitStatDto> stats = client.get(earliestEvent.getEventDate().format(DATE_TIME_FORMATTER),
+                LocalDateTime.now().format(DATE_TIME_FORMATTER), uris, true);
+        log.info("stats {}", stats);
+        Map<Long, Long> hits = new HashMap<>();
+        for (HitStatDto viewStatsDto: stats) {
+            log.info(viewStatsDto.getUri());
+            Long id = Long.parseLong(viewStatsDto.getUri().split("/")[1]);
+            log.info(id.toString());
+            hits.put(id, viewStatsDto.getHits());
+        }
+        return hits;
     }
 
 
