@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class CommentServiceImpl implements CommentService{
+public class CommentServiceImpl implements CommentService {
 
     CommentRepository commentRepo;
     EventRepository eventRepo;

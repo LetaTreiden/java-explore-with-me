@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
-  static private UserRepository userRepository;
+  private static UserRepository userRepository;
 
   public static UserDto toUserDto(@NonNull User user) {
     return new UserDto(
