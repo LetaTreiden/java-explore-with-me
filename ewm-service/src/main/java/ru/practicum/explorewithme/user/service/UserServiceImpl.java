@@ -39,6 +39,9 @@ public class UserServiceImpl implements UserService {
         log.info("get all");
         Pageable pageable = PageRequest.of(from, size);
         log.info(pageable.toString());
+        if (id == null) {
+            id = List.of();
+        }
         return UserMapper.mapToUserDto(uRepo.findAllByIdIn(id, pageable));
     }
 
