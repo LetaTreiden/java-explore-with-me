@@ -1,6 +1,10 @@
 package ru.practicum.explorewithme.event;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,11 +12,14 @@ import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Location;
+import ru.practicum.explorewithme.hit.HitService;
+import ru.practicum.explorewithme.request.repository.RequestRepository;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class EventMapper {
-
+  private static RequestRepository requestRepository;
+  private static HitService service;
   public static OutputEventDto toDto(Event event) {
     return OutputEventDto.builder()
         .id(event.getId())

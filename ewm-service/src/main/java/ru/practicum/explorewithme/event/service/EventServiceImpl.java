@@ -188,7 +188,6 @@ public class EventServiceImpl implements EventService {
     public List<EventInfo> getFullInfo(String text, List<Integer> categories, Boolean paid, LocalDateTime rangeStart,
                                        LocalDateTime rangeEnd, Boolean onlyAvailable, String sort, int from, int size) {
         log.info("start to search");
-
         List<Event> events = eventRepository.searchEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable,
                 sort, from, size);
         if (events.isEmpty()) {
