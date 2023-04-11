@@ -99,10 +99,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private Comment checkComment(Long commentId) {
-        Comment comment = commentRepo.findById(commentId).orElseThrow(() -> {
+        return commentRepo.findById(commentId).orElseThrow(() -> {
             throw new NoSuchElementException("There is no such comment id" + commentId);
         });
-        return comment;
     }
 
     private Event checkEvent(Long eventId) {
