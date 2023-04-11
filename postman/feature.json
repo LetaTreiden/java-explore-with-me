@@ -7,7 +7,7 @@
   },
   "item": [
     {
-      "name": "Добавление нового пользователя",
+      "name": "Добавление нового пользователя Copy",
       "event": [
         {
           "listen": "prerequest",
@@ -73,7 +73,7 @@
               "\r",
               "pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
               "    pm.expect(target.id).to.not.be.null;\r",
-              "    pm.expect(source.name).equal(target.name,'Имя пользователя должно соответствовать отправленному в запросе');\r",
+              "    pm.expect(source.name).equal(target.name, 'Имя пользователя должно соответствовать отправленному в запросе');\r",
               "    pm.expect(source.email).equal(target.email, 'Почта пользователя должна соответствовать отправленной в запросе');\r",
               "});\r",
               "\r",
@@ -277,7 +277,7 @@
               "});",
               "",
               "pm.test(\"Текст комментария соответствует отправленному\", function () {",
-              "    pm.expect(target.text).equal(\"Мне не понравилось\");",
+              "    pm.expect(target.text).equal(\"Ну так себе\");",
               "}) ",
               "",
               "pm.collectionVariables.set(\"commentId\", target.id);",
@@ -292,7 +292,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"created\": \"2023-04-05 00:46:03\",\n    \"text\": \"Мне не понравилось\"\n}\n",
+          "raw": "{\n    \"created\": \"2023-04-05 00:46:03\",\n    \"text\": \"Ну так себе\"\n}\n",
           "options": {
             "raw": {
               "language": "json"
@@ -346,7 +346,7 @@
               "});",
               "",
               "pm.test(\"Текст комментария соответствует отправленному\", function () {",
-              "    pm.expect(target.text).equal(\"Мне не понравилось\");",
+              "    pm.expect(target.text).equal(\"Сойдет\");",
               "}) ",
               "",
               "pm.collectionVariables.set(\"newCommentId\", target.id);",
@@ -361,7 +361,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"created\": \"2023-04-05 00:46:03\",\n    \"text\": \"Мне не понравилось\"\n}\n",
+          "raw": "{\n    \"created\": \"2023-04-05 00:46:03\",\n    \"text\": \"Сойдет\"\n}\n",
           "options": {
             "raw": {
               "language": "json"
@@ -518,7 +518,7 @@
               "});",
               "",
               "pm.test(\"Текст комментария соответствует отправленному\", function () {",
-              "    pm.expect(target.text).equal(\"Крутое мероприятие!!!\");",
+              "    pm.expect(target.text).equal(\"Крутое мероприятие, спасибо организаторам!!\");",
               "}) ",
               ""
             ],
@@ -531,7 +531,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\n    \"text\": \"Крутое мероприятие!!!\"\n}\n",
+          "raw": "{\n    \"text\": \"Крутое мероприятие, спасибо организаторам!!\"\n}\n",
           "options": {
             "raw": {
               "language": "json"
@@ -608,7 +608,7 @@
       "response": []
     },
     {
-      "name": "Admin delete coment",
+      "name": "Admin delete comment",
       "event": [
         {
           "listen": "test",
