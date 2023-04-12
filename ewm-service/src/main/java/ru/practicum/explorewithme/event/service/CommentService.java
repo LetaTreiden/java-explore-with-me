@@ -16,7 +16,7 @@ public interface CommentService {
 
     CommentDto update(Long commentId, Long userId, CommentDtoToUpdate commentDtoUpdate);
 
-    List<CommentDto> findAllForEvent(Long eventId, Pageable page);
+    List<CommentDto> findAllForEvent(Long eventId, Pageable page, Long userId);
 
     void deleteByAdmin(Long commentId);
 

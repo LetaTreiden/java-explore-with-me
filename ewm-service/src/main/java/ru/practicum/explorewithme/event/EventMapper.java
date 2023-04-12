@@ -7,13 +7,21 @@ import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Location;
+import ru.practicum.explorewithme.event.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class EventMapper {
+    private static CommentRepository commentRepository;
     public static OutputEventDto toDto(Event event) {
+        int comments;
+        try {
+            comments = commentRepository.findAllByEventId(event.getId()).size();
+        } catch (Exception e) {
+            comments = 0;
+        }
         return OutputEventDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
@@ -30,6 +38,7 @@ public class EventMapper {
                 .initiator(new OutputEventDto.User(event.getInitiator().getId(), event.getInitiator().getName()))
                 .category(new OutputEventDto.Category(event.getCategory().getId(), event.getCategory().getName()))
                 .views(0L)
+                .comments(comments)
                 .build();
     }
 

@@ -14,12 +14,14 @@ import ru.practicum.explorewithme.event.dto.CommentDtoToCreate;
 import ru.practicum.explorewithme.event.dto.CommentDtoToUpdate;
 import ru.practicum.explorewithme.event.model.Comment;
 import ru.practicum.explorewithme.event.model.Event;
+import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.repository.CommentRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -40,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto create(CommentDtoToCreate commentDtoCreate, Long eventId, Long userId) {
         log.info("create");
         User user = checkUser(userId);
-        Event event = checkEvent(eventId);
+        Event event = checkEvent(eventId, userId);
         Comment comment = CommentMapper.toCommentFromCommentDtoCreate(commentDtoCreate, event, user);
         log.info("id{}", comment.getId());
         commentRepo.save(comment);
@@ -70,21 +72,20 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto update(Long commentId, Long userId, CommentDtoToUpdate commentDtoUpdate) {
         log.info("update");
         Comment comment = checkComment(commentId);
+        if (comment.getCreated().plusDays(1).isBefore(LocalDateTime.now())) {
+            throw new ValidationException("You can't update this comment. It was published more than day ago");
+        }
         checkUser(userId);
         if (!userId.equals(comment.getAuthor().getId())) {
             throw new ValidationException("You don't have such rights");
-        }
-
-        if (commentDtoUpdate.getText() != null) {
-            comment.setText(commentDtoUpdate.getText());
         }
         return CommentMapper.toCommentDto(comment);
     }
 
     @Override
-    public List<CommentDto> findAllForEvent(Long eventId, Pageable page) {
+    public List<CommentDto> findAllForEvent(Long eventId, Pageable page, Long userId) {
         log.info("find all");
-        checkEvent(eventId);
+        checkEvent(eventId, userId);
         return commentRepo.findAllByEventId(eventId, page).stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList());
@@ -104,17 +105,19 @@ public class CommentServiceImpl implements CommentService {
         });
     }
 
-    private Event checkEvent(Long eventId) {
+    private Event checkEvent(Long eventId, Long userId) {
         Event event = eventRepo.findById(eventId).orElseThrow(() -> {
             throw new NoSuchElementException("There is no such event id" + eventId);
         });
+        if (event.getState() != EventStatus.PUBLISHED && !userId.equals(event.getInitiator().getId())) {
+            throw new ValidationException("You don't have such rights");
+        }
         return event;
     }
 
     private User checkUser(Long userId) {
-        User user = userRepo.findById(userId).orElseThrow(() -> {
+        return userRepo.findById(userId).orElseThrow(() -> {
             throw new NoSuchElementException("There is no such user id" + userId);
         });
-        return user;
     }
 }

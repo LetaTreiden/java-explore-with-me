@@ -1,12 +1,10 @@
 package ru.practicum.explorewithme.event.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -14,10 +12,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommentDtoToCreate {
-    @NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime created;
     @NotBlank
+    @Size(min = 1, max = 3000)
     String text;
 }
 

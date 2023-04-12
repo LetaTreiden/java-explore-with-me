@@ -37,6 +37,7 @@ public class OutputEventDto {
   private LocalDateTime publishedOn;
 
   private Integer confirmedRequests;
+  private Integer comments;
 
   @Data
   @Getter

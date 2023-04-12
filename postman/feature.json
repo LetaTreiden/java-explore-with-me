@@ -431,7 +431,7 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/comments?eventId={{eventId}}",
+          "raw": "http://localhost:8080/comments?eventId={{eventId}}?userId={{userIdYe}}",
           "protocol": "http",
           "host": [
             "localhost"
@@ -444,6 +444,10 @@
             {
               "key": "eventId",
               "value": "{{eventId}}"
+            },
+            {
+              "key": "userId",
+              "value": "{{userId}}"
             }
           ]
         }

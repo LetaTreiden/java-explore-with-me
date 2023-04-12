@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.event;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.explorewithme.event.dto.CommentDto;
 import ru.practicum.explorewithme.event.dto.CommentDtoToCreate;
 import ru.practicum.explorewithme.event.model.Comment;
@@ -7,22 +8,16 @@ import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.user.UserMapper;
 import ru.practicum.explorewithme.user.model.User;
 
-public class CommentMapper {
+import java.time.LocalDateTime;
 
-    public static Comment toComment(CommentDto commentDto, Event event) {
-        return new Comment(
-                commentDto.getId(),
-                commentDto.getCreated(),
-                event,
-                UserMapper.toUser(commentDto.getAuthor()),
-                commentDto.getText()
-        );
-    }
+@UtilityClass
+public class CommentMapper {
 
     public static Comment toCommentFromCommentDtoCreate(CommentDtoToCreate commentDtoCreate, Event event, User author) {
         return new Comment(
                 null,
-                commentDtoCreate.getCreated(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
                 event,
                 author,
                 commentDtoCreate.getText()
