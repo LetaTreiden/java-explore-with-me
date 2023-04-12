@@ -14,15 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class EventMapper {
-    private static CommentRepository commentRepository;
 
-    public static OutputEventDto toDto(Event event) {
-        int comments;
-        try {
-            comments = commentRepository.findAllByEventId(event.getId()).size();
-        } catch (Exception e) {
-            comments = 0;
-        }
+    public static OutputEventDto toDto(Event event, int comments) {
         return OutputEventDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
