@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Slf4j
 public class EventMapper {
     private static CommentRepository commentRepository;
+
     public static OutputEventDto toDto(Event event) {
         int comments;
         try {
