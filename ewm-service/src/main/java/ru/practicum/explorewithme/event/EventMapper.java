@@ -7,7 +7,6 @@ import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.Location;
-import ru.practicum.explorewithme.event.repository.CommentRepository;
 
 import java.time.LocalDateTime;
 
