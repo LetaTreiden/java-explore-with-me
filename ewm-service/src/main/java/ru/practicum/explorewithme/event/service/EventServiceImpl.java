@@ -56,10 +56,10 @@ public class EventServiceImpl implements EventService {
         PageRequest pageable = PageRequest.of(from / size, size, sort);
         List<Event> list = eventRepository.findAllByInitiatorId(userId, pageable);
         List<Long> eventIds = list.stream().map(Event::getId).collect(Collectors.toList());
-        Map<Long, Integer> commentCounts = commentRepository.getCommentsEvents(eventIds);
+        Map<Long, Integer> commentCounts = commentRepository.getCommentEvents(eventIds);
         ArrayList<OutputEventDto> toReturn = new ArrayList<>();
         for (Event event : list) {
-            int comment = commentCounts.get(event.getId()) != null ? commentCounts.get(event.getId()) : 0;
+            int comment = commentCounts.getOrDefault(event.getId(), 0);
 
             toReturn.add(EventMapper.toDto(event, comment));
         }
@@ -80,8 +80,8 @@ public class EventServiceImpl implements EventService {
         event.setCategory(category);
         event.setState(EventStatus.PENDING);
         eventRepository.save(event);
-        Map comments = commentRepository.getCommentsEvents(List.of(event.getId()));
-        int comment = comments.get(event.getId()) != null ? (Integer) comments.get(event.getId()) : 0;
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
 
         return EventMapper.toDto(event, comment);
     }
@@ -90,8 +90,8 @@ public class EventServiceImpl implements EventService {
     public OutputEventDto getById(long userId, long eventId) {
         log.info("get by id");
         Event event = checkEventExistence(eventId);
-        Map comments = commentRepository.getCommentsEvents(List.of(event.getId()));
-        int comment = comments.get(event.getId()) != null ? (Integer) comments.get(event.getId()) : 0;
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
 
         return EventMapper.toDto(event, comment);
     }
@@ -121,8 +121,8 @@ public class EventServiceImpl implements EventService {
         Event updEvent = EventMapper.toEvent(dto, event);
         eventRepository.save(updEvent);
         log.info(updEvent.getState().toString());
-        Map comments = commentRepository.getCommentsEvents(List.of(event.getId()));
-        int comment = comments.get(event.getId()) != null ? (Integer) comments.get(event.getId()) : 0;
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
 
         return EventMapper.toDto(event, comment);
     }
@@ -188,8 +188,8 @@ public class EventServiceImpl implements EventService {
 
         eventRepository.save(updEvent);
         log.info("state {}", updEvent.getState().toString());
-        Map comments = commentRepository.getCommentsEvents(List.of(event.getId()));
-        int comment = comments.get(event.getId()) != null ? (Integer) comments.get(event.getId()) : 0;
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
 
         return EventMapper.toDto(event, comment);
     }

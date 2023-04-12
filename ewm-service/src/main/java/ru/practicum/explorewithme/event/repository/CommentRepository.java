@@ -11,10 +11,8 @@ import java.util.Map;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findAllByEventId(Long id, Pageable page);
 
-    @Query(value = "select * " +
-            "from comments as c " +
-            "WHERE c.event_id = ?1 ",
-            nativeQuery = true)
-    Map<Long, Integer> getCommentsEvents(List<Long> eventIds);
+    @Query(value = "select com.event.id, count(com) from comments com where com.event.id = ?1 group by com.event.id",
+    nativeQuery = true)
+    Map<Long, Integer> getCommentEvents(List<Long> eventIds);
 
 }

@@ -12,6 +12,7 @@ import ru.practicum.explorewithme.event.dto.CommentDtoToUpdate;
 import ru.practicum.explorewithme.event.service.CommentService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class CommentController {
 
     @GetMapping()
     public List<CommentDto> findAllForEvent(@RequestParam Long eventId, @RequestParam Long userId,
-                                                    @PositiveOrZero @RequestParam(defaultValue = "1") int from,
+                                                    @Positive @RequestParam(defaultValue = "1") int from,
                                                     @PositiveOrZero @RequestParam(defaultValue = "10") int size) {
         PageRequest page = PageRequest.of(from / size, size);
         return service.findAllForEvent(eventId, page, userId);
