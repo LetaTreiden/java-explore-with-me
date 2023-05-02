@@ -18,6 +18,7 @@ import ru.practicum.explorewithme.event.dto.*;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.EventStatus;
 import ru.practicum.explorewithme.event.model.State;
+import ru.practicum.explorewithme.event.repository.CommentRepository;
 import ru.practicum.explorewithme.event.repository.EventRepository;
 import ru.practicum.explorewithme.exceptions.ValidationException;
 import ru.practicum.explorewithme.request.repository.RequestRepository;
@@ -35,23 +36,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EventServiceImpl implements EventService {
 
+    static final String URI = "/events/";
+    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-
     private final CategoryRepository categoryRepository;
     private final RequestRepository requestRepository;
+    private final CommentRepository commentRepository;
     private final LocalDateTime max = LocalDateTime.of(3023, 9, 19, 14, 5);
-
     private final LocalDateTime min = LocalDateTime.of(1023, 9, 19, 14, 5);
-
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     private final StatsClient statsClient;
-
-    static final String URI = "/events/";
-
-    static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
     private final StatsClient client;
 
     @Override
@@ -59,9 +54,16 @@ public class EventServiceImpl implements EventService {
         log.info("get all");
         Sort sort = Sort.by("createdOn").descending();
         PageRequest pageable = PageRequest.of(from / size, size, sort);
-        return eventRepository.findAllByInitiatorId(userId, pageable).stream()
-                .map(EventMapper::toDto)
-                .collect(Collectors.toList());
+        List<Event> list = eventRepository.findAllByInitiatorId(userId, pageable);
+        List<Long> eventIds = list.stream().map(Event::getId).collect(Collectors.toList());
+        Map<Long, Integer> commentCounts = commentRepository.getCommentEvents(eventIds);
+        ArrayList<OutputEventDto> toReturn = new ArrayList<>();
+        for (Event event : list) {
+            int comment = commentCounts.getOrDefault(event.getId(), 0);
+
+            toReturn.add(EventMapper.toDto(event, comment));
+        }
+        return toReturn;
     }
 
     @Override
@@ -78,14 +80,20 @@ public class EventServiceImpl implements EventService {
         event.setCategory(category);
         event.setState(EventStatus.PENDING);
         eventRepository.save(event);
-        return EventMapper.toDto(event);
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
+
+        return EventMapper.toDto(event, comment);
     }
 
     @Override
     public OutputEventDto getById(long userId, long eventId) {
         log.info("get by id");
         Event event = checkEventExistence(eventId);
-        return EventMapper.toDto(event);
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
+
+        return EventMapper.toDto(event, comment);
     }
 
     @Override
@@ -113,7 +121,10 @@ public class EventServiceImpl implements EventService {
         Event updEvent = EventMapper.toEvent(dto, event);
         eventRepository.save(updEvent);
         log.info(updEvent.getState().toString());
-        return EventMapper.toDto(updEvent);
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
+
+        return EventMapper.toDto(event, comment);
     }
 
     @Override
@@ -126,12 +137,12 @@ public class EventServiceImpl implements EventService {
         }
         Map<Long, Long> hits = get(events);
         List<Long> eventIds = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             eventIds.add(event.getId());
         }
         Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
         List<EventInfo> result = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             EventInfo info = EventMapper.toFullDto(event);
             info.setConfirmedRequests(confRequests.get(info.getId()));
             info.setViews(hits.get(event.getId()));
@@ -177,7 +188,10 @@ public class EventServiceImpl implements EventService {
 
         eventRepository.save(updEvent);
         log.info("state {}", updEvent.getState().toString());
-        return EventMapper.toDto(updEvent);
+        Map comments = commentRepository.getCommentEvents(List.of(event.getId()));
+        int comment = (int) comments.getOrDefault(event.getId(), 0);
+
+        return EventMapper.toDto(event, comment);
     }
 
     @Override
@@ -191,12 +205,12 @@ public class EventServiceImpl implements EventService {
         }
         Map<Long, Long> hits = getTwo(events);
         List<Long> eventIds = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             eventIds.add(event.getId());
         }
         Map<Long, Integer> confRequests = requestRepository.getRequestsEventsConfirmed(eventIds);
         List<EventInfo> result = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             EventInfo info = EventMapper.toFullDto(event);
             info.setConfirmedRequests(confRequests.get(info.getId()));
             info.setViews(hits.get(event.getId()));
@@ -217,7 +231,7 @@ public class EventServiceImpl implements EventService {
         }
         info.setConfirmedRequests(requests);
         Map<Long, Long> hits = get(List.of(eventRepository.getReferenceById(eventId)));
-        log.info("hits {}", hits.toString());
+        log.info("hits {}", hits);
         info.setViews(hits.get(eventId));
         return info;
     }
@@ -234,7 +248,7 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> get(List<Event> events) {
         List<String> uris = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             uris.add(URI + event.getId().toString());
             log.info(uris.toString());
         }
@@ -244,7 +258,7 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().format(DATE_TIME_FORMATTER), uris, true);
         log.info("stats {}", stats);
         Map<Long, Long> hits = new HashMap<>();
-        for (HitStatDto viewStatsDto: stats) {
+        for (HitStatDto viewStatsDto : stats) {
             Long id = Long.parseLong(viewStatsDto.getUri().split("/")[2]);
             log.info(id.toString());
             hits.put(id, viewStatsDto.getHits());
@@ -254,7 +268,7 @@ public class EventServiceImpl implements EventService {
 
     private Map<Long, Long> getTwo(List<Event> events) {
         List<String> uris = new ArrayList<>();
-        for (Event event: events) {
+        for (Event event : events) {
             uris.add(URI + event.getId().toString());
             log.info(uris.toString());
         }
@@ -264,7 +278,7 @@ public class EventServiceImpl implements EventService {
                 LocalDateTime.now().format(DATE_TIME_FORMATTER), uris, true);
         log.info("stats {}", stats);
         Map<Long, Long> hits = new HashMap<>();
-        for (HitStatDto viewStatsDto: stats) {
+        for (HitStatDto viewStatsDto : stats) {
             log.info(viewStatsDto.getUri());
             Long id = Long.parseLong(viewStatsDto.getUri().split("/")[1]);
             log.info(id.toString());

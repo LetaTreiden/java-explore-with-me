@@ -3,14 +3,18 @@ package ru.practicum.explorewithme.user;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import ru.practicum.explorewithme.event.dto.CommentDto;
 import ru.practicum.explorewithme.user.dto.UserDto;
 import ru.practicum.explorewithme.user.model.User;
+import ru.practicum.explorewithme.user.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
+
+  private static UserRepository userRepository;
 
   public static UserDto toUserDto(@NonNull User user) {
     return new UserDto(
@@ -34,5 +38,13 @@ public class UserMapper {
       dtos.add(toUserDto(user));
     }
     return dtos;
+  }
+
+  public static User toUser(CommentDto.User userComment) {
+    return userRepository.getReferenceById(userComment.getId());
+  }
+
+  public static CommentDto.User toUserComment(User user) {
+    return new CommentDto.User(user.getId(), user.getName());
   }
 }

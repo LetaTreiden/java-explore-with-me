@@ -13,7 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public class EventMapper {
-    public static OutputEventDto toDto(Event event) {
+
+    public static OutputEventDto toDto(Event event, int comments) {
         return OutputEventDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
@@ -30,6 +31,7 @@ public class EventMapper {
                 .initiator(new OutputEventDto.User(event.getInitiator().getId(), event.getInitiator().getName()))
                 .category(new OutputEventDto.Category(event.getCategory().getId(), event.getCategory().getName()))
                 .views(0L)
+                .comments(comments)
                 .build();
     }
 

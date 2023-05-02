@@ -25,11 +25,13 @@ public class CompilationMapper {
   }
 
   public static Compilation toCompilation(CompilationDtoToCreate compilationDto) {
-    return Compilation.builder()
-        .title(compilationDto.getTitle())
-        .pinned(compilationDto.isPinned())
-        .events(compilationDto.getEvents().stream().map(Event::new).collect(Collectors.toSet()))
-        .build();
+    Compilation compilation = new Compilation();
+    compilation.setTitle(compilationDto.getTitle());
+    compilation.setPinned(compilationDto.isPinned());
+    if (!compilationDto.getEvents().isEmpty()) {
+      compilation.setEvents(compilationDto.getEvents().stream().map(Event::new).collect(Collectors.toSet()));
+    }
+    return compilation;
   }
 
   public static Compilation toUpdatedComp(CompilationDtoToUpdate compilationDto,
