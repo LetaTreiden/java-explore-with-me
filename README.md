@@ -1,4 +1,7 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
 
-https://github.com/LetaTreiden/java-explore-with-me/pull/9
+Микросервисный проект по поиску мероприятий и событий. Функционал приложения различается в зависимости от уровня прав пользователя - зарегистрированный пользователь или администратор.
+
+Стек технологий: Java, Spring, Spring Boot, Maven, Lombook, PostgreSQL, Docker, Hibernate
+
+Версия языка - java 11
